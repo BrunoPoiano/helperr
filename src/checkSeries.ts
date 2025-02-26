@@ -1,6 +1,11 @@
 import dotenv from "dotenv";
 import { QBittorrent } from "@ctrl/qbittorrent";
-import { prepareComparisonString, Series, timeLogs, Torrents } from "./index";
+import {
+  prepareComparisonString,
+  Series,
+  timeLogs,
+  Torrents,
+} from "./index.js";
 
 dotenv.config();
 

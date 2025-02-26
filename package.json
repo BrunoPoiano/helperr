@@ -1,9 +1,10 @@
 {
-  "name": "qbit-renamer",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "qbit-relocater",
+  "version": "0.1.0",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
+    "check": "node dist/index.js",
     "checkMovies": "node dist/checkMovies.js",
     "checkSeries": "node dist/checkSeries.js",
     "renameFiles": "node dist/renameFiles.js"
@@ -11,7 +12,7 @@
   "exports": "./src/index.js",
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "automatic relocate sonarr and radarr files from qbittorrent",
   "type": "module",
   "dependencies": {
     "@ctrl/qbittorrent": "^9.4.0",

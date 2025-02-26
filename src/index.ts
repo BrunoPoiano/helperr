@@ -1,3 +1,6 @@
+import { moviesCompareAndChangeLocation } from "./checkMovies.js";
+import { seriesCompareAndChangeLocation } from "./checkSeries.js";
+
 export type Movies = {
   id: number;
   title: string;
@@ -88,3 +91,6 @@ export const prepareComparisonString = (item: string): string => {
 
   return name;
 };
+
+moviesCompareAndChangeLocation();
+seriesCompareAndChangeLocation();

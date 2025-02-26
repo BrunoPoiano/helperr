@@ -1,8 +1,6 @@
+# Qbit-relocater
 
-
-# Qbit-renamer
-
-Qbit-renamer is a script that conects with sonarr, radarr and qBittorrent and redirects torrents to the right folder
+Qbit-relocater is a script that conects with sonarr, radarr and qBittorrent and redirects torrents to the right folder
 
 
 ## Before Deployment
@@ -18,8 +16,8 @@ Qbit-renamer is a script that conects with sonarr, radarr and qBittorrent and re
 
 
 ```bash
-git clone git@github.com:BrunoPoiano/qbit-renamer.git
-cd qbit-renamer
+git clone git@github.com:BrunoPoiano/qbit-relocater.git
+cd qbit-relocater
 ```
 
 .env
@@ -34,7 +32,7 @@ cp .env.exemple .env
 Build the image
 
 ```bash
-docker build -t qbit-renamer .
+docker build -t qbit-relocater .
 ```
 
 run the container
@@ -44,9 +42,15 @@ docker compose up -d
 ```
 
 test/run a manual scan
+Movies
 ```bash
-docker exec qbit-renamer npm run changeTorrentLocation
+docker exec qbit-relocater npm run checkMovies
 ```
+Series
+```bash
+docker exec qbit-relocater npm run checkSeries
+```
+
 
 
 

@@ -1,6 +1,6 @@
 services:
-  qbit-renamer:
-    image: qbit-renamer
+  qbit-relocater:
+    image: qbit-relocater
     env_file: .env
     restart: unless-stopped
-    container_name: qbit-renamer
+    container_name: qbit-relocater

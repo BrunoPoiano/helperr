@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import { Movies, timeLogs } from "./index";
-import { radarr_cliente } from "./checkMovies";
+import { Movies, timeLogs } from "./index.js";
+import { radarr_cliente } from "./checkMovies.js";
 dotenv.config();
 
 const getMoviesTorrentsLength = async (): Promise<number> => {
