@@ -4,9 +4,11 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "changeTorrentLocation": "node dist/changeTorrentLocation.js",
+    "checkMovies": "node dist/checkMovies.js",
+    "checkSeries": "node dist/checkSeries.js",
     "renameFiles": "node dist/renameFiles.js"
   },
+  "exports": "./src/index.js",
   "author": "",
   "license": "ISC",
   "description": "",
