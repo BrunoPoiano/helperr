@@ -17,4 +17,4 @@ RUN echo "0 4 * * * cd /usr/src/app && npm run renameFiles >> /var/log/cron.log 
 RUN touch /var/log/cron.log
 
 # Start cron and follow logs
-CMD crond -f & tail -f /var/log/cron.log
+CMD crond -f && tail -f /var/log/cron.log
