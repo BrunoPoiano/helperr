@@ -1,0 +1,7 @@
+services:
+  qbit-renamer:
+    build: .
+    container_name: "qbit-renamer"
+    env_file: .env
+    restart: unless-stopped
+  
