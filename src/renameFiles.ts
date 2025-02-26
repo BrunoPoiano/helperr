@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Movies, timeLogs } from "./index.js";
+import { Movies, timeLogs } from "./utils.js";
 import { radarr_cliente } from "./checkMovies.js";
 dotenv.config();
 

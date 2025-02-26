@@ -5,7 +5,7 @@ import {
   prepareComparisonString,
   timeLogs,
   Torrents,
-} from "./index.js";
+} from "./utils.js";
 
 dotenv.config();
 
@@ -120,4 +120,6 @@ export const moviesCompareAndChangeLocation = async () => {
   }
 };
 
-moviesCompareAndChangeLocation();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  moviesCompareAndChangeLocation();
+}

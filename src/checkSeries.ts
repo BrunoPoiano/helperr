@@ -5,7 +5,7 @@ import {
   Series,
   timeLogs,
   Torrents,
-} from "./index.js";
+} from "./utils.js";
 
 dotenv.config();
 
@@ -117,5 +117,6 @@ export const seriesCompareAndChangeLocation = async () => {
     }
   }
 };
-
-seriesCompareAndChangeLocation();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seriesCompareAndChangeLocation();
+}
