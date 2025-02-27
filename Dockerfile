@@ -5,12 +5,11 @@ RUN apk add --no-cache dcron
 WORKDIR /usr/src/app
 
 COPY . .
-COPY .env .
 
 RUN npm install && npm run build
 
 # Setup crontab - Fixed spacing in cron expressions
-RUN echo "*/5 * * * * cd /usr/src/app && npm run check >> /var/log/cron.log 2>&1" > /etc/crontabs/root
+RUN echo "*/10 * * * * cd /usr/src/app && npm run check >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 RUN echo "0 4 * * * cd /usr/src/app && npm run renameFiles >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
 
 # cron log file

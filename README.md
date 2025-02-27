@@ -10,6 +10,9 @@ Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and
 - ensure that qBittorrent in radarr has the `radarr` category
 - ensure that qBittorrent `Keep incomplete torrents in` is checked
 
+- radarr new location is `downloads/radarr/{root-folder}`
+- sonarr new location is `downloads/{root-folder}`
+
 
 ## Deployment
 
