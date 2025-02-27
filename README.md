@@ -3,7 +3,6 @@
 Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and redirects torrents to the right folder
 
 ## Before Deployment
-
 - both radarr and sonnar should be version 3
 - ensure that both sonarr and radarr has `Rename Episodes` checked
 - ensure that qBittorrent in sonnar has the `tv-sonarr` category
