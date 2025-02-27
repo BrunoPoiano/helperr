@@ -1,6 +1,6 @@
 services:
   qbit-relocater:
-    image: qbit-relocater
+    image: .
     env_file: .env
     restart: unless-stopped
     container_name: qbit-relocater
