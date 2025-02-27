@@ -16,7 +16,25 @@ Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and
 ### using image
 
 ```bash
-#docker container
+#.env
+RADARR_QBITTORRENT_URL="http://localhost:8080"
+RADARR_QBITTORRENT_USERNAME=
+RADARR_QBITTORRENT_PASSWORD=
+
+RADARR_URL="http://localhost:7878"
+RADARR_API_KEY=
+
+SONARR_QBITTORRENT_URL="http:localhost:8080"
+SONARR_QBITTORRENT_USERNAME=
+SONARR_QBITTORRENT_PASSWORD=
+
+SONARR_URL="http://localhost:8989"
+SONARR_API_KEY=
+```
+
+
+```bash
+#docker-compose.yaml
 services:
   qbit-relocater:
     image: docker.io/brunopoiano/qbit-relocater
@@ -33,7 +51,6 @@ cd qbit-relocater
 ```
 
 .env
-
 ```bash
 cp .env.exemple .env
 ```
@@ -42,23 +59,20 @@ cp .env.exemple .env
 
 
 Build the image
-
 ```bash
 docker build -t qbit-relocater .
 ```
 
 run the container
-
 ```bash
 docker compose up -d
 ```
 
-test/run a manual scan
-Movies
+test/run a manual scan movies
 ```bash
 docker exec qbit-relocater npm run checkMovies
 ```
-Series
+test/run a manual scan series
 ```bash
 docker exec qbit-relocater npm run checkSeries
 ```

@@ -22,4 +22,3 @@ RUN chmod +x /start.sh
 
 # Use the start script
 CMD ["/start.sh"]
-
