@@ -1,8 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 export type Movies = {
   id: number;
   title: string;
   movieFileId?: number;
-  path?: string;
+  path: string;
   movieFile?: {
     path: string;
     relativePath: string;
@@ -21,7 +24,7 @@ export type Torrents = {
   save_path?: string;
 };
 
-export const timeLogs = <T>(log: T) => {
+export const timeLogs = async <T>(log: T, sendToBot?: string) => {
   const now = new Date();
 
   const formattedDate = new Intl.DateTimeFormat("pt-BR", {
@@ -35,6 +38,37 @@ export const timeLogs = <T>(log: T) => {
   }).format(now);
 
   console.log(formattedDate, "|", log);
+
+  if (sendToBot) {
+    await telegramBotChat(sendToBot);
+  }
+};
+
+export const telegramBotChat = async (log: string) => {
+  const tel_bot_token = process.env.TELEGRAM_BOT_TOKEN;
+  const tel_chat_id = process.env.TELEGRAM_CHAT_ID;
+
+  if (!tel_bot_token || !tel_chat_id) return;
+
+  const tel_bot_api_route = `https://api.telegram.org/bot${tel_bot_token}/sendMessage`;
+  const body = {
+    chat_id: tel_chat_id,
+    text: `*qBit-renamer*: \n${log}`,
+    parse_mode: "Markdown",
+  };
+
+  try {
+    await fetch(tel_bot_api_route, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    console.error("Error sending message to Telegram bot");
+    console.error(error);
+  }
 };
 
 export const prepareComparisonString = (item: string): string => {
@@ -43,6 +77,7 @@ export const prepareComparisonString = (item: string): string => {
   name = name.replace(/s\d{2}e\d{2}/gi, "");
   name = name.replace(/\b(19|20|21)\d{2}\b/g, "");
   name = name.replace(/[\[\(].*?[\]\)]/g, "");
+  name = name.replace(/\s-\s\d{2}/g, "");
 
   const infoList = [
     "amzn",

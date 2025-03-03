@@ -16,6 +16,8 @@ Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and
 
 ## Deployment
 
+[qbit-relocator image](https://hub.docker.com/repository/docker/brunopoiano/qbit-relocater/general)
+
 ### using image
 in the same folder create a .env and a docker-compose.yaml
 ```bash

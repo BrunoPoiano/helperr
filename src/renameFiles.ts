@@ -45,6 +45,7 @@ const getAllMovies = async (): Promise<Movies[]> => {
             movies.push({
               id: element.id,
               title: element.title,
+              path: element.path,
               movieFileId: element.movieFileId,
               movieFile: {
                 path: element.movieFile.path,
