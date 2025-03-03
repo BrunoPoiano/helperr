@@ -94,7 +94,6 @@ export const seriesCompareAndChangeLocation = async () => {
 
     for (const serie of series) {
       const serie_title = prepareComparisonString(serie.title);
-      console.log(torrent_name, "|", serie_title);
       if (
         torrent_name === serie_title ||
         torrent_name.match(new RegExp(`\\b${serie_title}\\b`))
@@ -112,7 +111,7 @@ export const seriesCompareAndChangeLocation = async () => {
             "series path": serie.path,
             "new torrent location": new_path,
           },
-          `${serie.title} moved to "${new_path}"`,
+          `A new ${serie.title} episode was moved to "${new_path}"`,
         );
 
         sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
