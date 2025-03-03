@@ -1,18 +1,19 @@
 # Qbit-relocater
 
-Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and redirects torrents to the right folder
+Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and redirects torrents to the right folder. 
+
+It moves the torrent without qbittorent losing link and without the necessity of doing hardlinks or radarr/sonarr moving files 
 
 ## Before Deployment
 
 - both radarr and sonnar should be version 3
-- ensure that both sonarr and radarr has `Rename Episodes` checked
 - ensure that qBittorrent in sonnar has the `tv-sonarr` category
 - ensure that qBittorrent in radarr has the `radarr` category
-- ensure that qBittorrent `Keep incomplete torrents in` is checked
 
-- radarr new location is `downloads/radarr/{root-folder}`
-- sonarr new location is `downloads/{root-folder}`
-
+*recomended settings*
+- in qBittorrent check `Keep incomplete torrents in`
+- in sonarr/radarr check `Rename Episodes`
+- in radarr/sonnar qBittorrent settings set `Content Layout` as Original
 
 ## Deployment
 
@@ -22,21 +23,32 @@ Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and
 in the same folder create a .env and a docker-compose.yaml
 ```bash
 #.env
-RADARR_QBITTORRENT_URL="http://localhost:8080"
+########## RADARR
+
+RADARR_QBITTORRENT_URL="http://192.168.3.53:8080"
 RADARR_QBITTORRENT_USERNAME=
 RADARR_QBITTORRENT_PASSWORD=
 
-RADARR_URL="http://localhost:7878"
+RADARR_URL="http://192.168.3.53:7878"
 RADARR_API_KEY=
+RADARR_DOWNLOAD_PATH="/downloads/movies/"
 
-SONARR_QBITTORRENT_URL="http:localhost:8080"
+########## SONARR
+
+SONARR_QBITTORRENT_URL="http://192.168.3.29:8080"
 SONARR_QBITTORRENT_USERNAME=
 SONARR_QBITTORRENT_PASSWORD=
 
-SONARR_URL="http://localhost:8989"
+SONARR_URL="http://192.168.3.29:8989"
 SONARR_API_KEY=
-```
+SONARR_DOWNLOAD_PATH="/downloads/shows/"
 
+############### OPTIONAL
+
+######### TELEGRAM BOT
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+```
 
 ```bash
 #docker-compose.yaml
@@ -80,4 +92,8 @@ docker exec qbit-relocater npm run checkMovies
 test/run a manual scan series
 ```bash
 docker exec qbit-relocater npm run checkSeries
+```
+test telegram bot connection
+```bash
+docker exec qbit-relocater npm run testBot
 ```
