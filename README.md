@@ -6,7 +6,7 @@ It moves the files without qbittorent losing link and without the necessity of d
 
 ## Before Deployment
 
-- both radarr and sonnar should be version 3
+- both radarr and sonnar should be at least version 3+
 - ensure that qBittorrent in sonnar has the `tv-sonarr` category
 - ensure that qBittorrent in radarr has the `radarr` category
 - ensure that in radar/sonar `Completed Download Handling` is disabled

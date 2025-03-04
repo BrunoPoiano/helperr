@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { argv0 } from "process";
 dotenv.config();
 
 export type Movies = {
@@ -122,4 +123,37 @@ export const prepareComparisonString = (item: string): string => {
   name = name.replace(/\s+/g, " ").trim();
 
   return name;
+};
+
+export const mediaBinarySearch = (
+  content: Series[],
+  compare: string,
+): Series | null => {
+  let start = 0;
+  let end = content.length - 1;
+  let middle = Math.floor((start + end) / 2);
+
+  const content_sorted = [...content].sort((a: Series, b: Series) =>
+    a.title.localeCompare(b.title),
+  );
+
+  while (end >= start) {
+    middle = Math.floor((end + start) / 2);
+    const serie_title = prepareComparisonString(content_sorted[middle].title);
+
+    if (
+      compare === serie_title ||
+      compare.match(new RegExp(`\\b${serie_title}\\b`))
+    ) {
+      return content_sorted[middle];
+    }
+
+    if (compare.localeCompare(serie_title) < 0) {
+      end = middle - 1;
+    } else {
+      start = middle + 1;
+    }
+  }
+
+  return null;
 };

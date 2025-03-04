@@ -1,11 +1,13 @@
 import dotenv from "dotenv";
 import { QBittorrent } from "@ctrl/qbittorrent";
 import {
+  mediaBinarySearch,
   prepareComparisonString,
   Series,
   timeLogs,
   Torrents,
 } from "./utils.js";
+import { warn } from "console";
 
 dotenv.config();
 
@@ -77,6 +79,7 @@ const getAllSeries = async (): Promise<Series[]> => {
 };
 
 export const seriesCompareAndChangeLocation = async () => {
+  console.time("series");
   const torrents = await getAllSeriesTorrents();
   timeLogs("running series check");
   if (torrents.length === 0) {
@@ -91,35 +94,30 @@ export const seriesCompareAndChangeLocation = async () => {
 
   for (const torrent of torrents) {
     const torrent_name = prepareComparisonString(torrent.name);
+    console.log(torrent_name);
+    const serie = mediaBinarySearch(series, torrent_name);
+    if (serie) {
+      const split = serie.path.split("/");
+      const series_name = split[split.length - 1];
+      const new_path = `${process.env.SONARR_DOWNLOAD_PATH}${series_name}`;
 
-    for (const serie of series) {
-      const serie_title = prepareComparisonString(serie.title);
-      if (
-        torrent_name === serie_title ||
-        torrent_name.match(new RegExp(`\\b${serie_title}\\b`))
-      ) {
-        const split = serie.path.split("/");
-        const series_name = split[split.length - 1];
-        const new_path = `${process.env.SONARR_DOWNLOAD_PATH}${series_name}`;
+      timeLogs(
+        {
+          "torrent name comparison": torrent_name,
+          "torrent name": torrent.name,
+          "series title": serie.title,
+          "series path": serie.path,
+          "new torrent location": new_path,
+        },
+        `A new ${serie.title} episode was moved to "${new_path}"`,
+      );
 
-        timeLogs(
-          {
-            "torrent name comparison": torrent_name,
-            "series name comparison": serie_title,
-            "torrent name": torrent.name,
-            "series title": serie.title,
-            "series path": serie.path,
-            "new torrent location": new_path,
-          },
-          `A new ${serie.title} episode was moved to "${new_path}"`,
-        );
-
-        sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
-        break;
-      }
+      //sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
     }
   }
+  console.timeEnd("series");
 };
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   seriesCompareAndChangeLocation();
 }
