@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { QBittorrent } from "@ctrl/qbittorrent";
 import {
+  mediaBinarySearch,
   Movies,
   prepareComparisonString,
   timeLogs,
@@ -93,33 +94,29 @@ export const moviesCompareAndChangeLocation = async () => {
 
   for (const torrent of torrents) {
     const torrent_name = prepareComparisonString(torrent.name);
+    const movie = mediaBinarySearch(movies, torrent_name);
 
-    for (const movie of movies) {
-      const movie_title = prepareComparisonString(movie.title);
+    if (movie) {
+      const split = movie.path.split("/");
+      const movie_name = split[split.length - 1];
+      const new_path = `${process.env.RADARR_DOWNLOAD_PATH}${movie_name}`;
 
-      if (
-        torrent_name === movie_title ||
-        torrent_name.match(new RegExp(`\\b${movie_title}\\b`))
-      ) {
-        const split = movie.path.split("/");
-        const movie_name = split[split.length - 1];
-        const new_path = `${process.env.RADARR_DOWNLOAD_PATH}${movie_name}`;
+      timeLogs(
+        {
+          "torrent name": torrent.name,
+          "movie title": movie.title,
+          "movie radarr path": movie.path,
+          "new torrent location": new_path,
+        },
+        `${movie.title} moved to "${new_path}"`,
+      );
 
-        timeLogs(
-          {
-            "torrent name comparison": torrent_name,
-            "movie name comparison": movie_title,
-            "torrent name": torrent.name,
-            "movie title": movie.title,
-            "movie path": movie.path,
-            "new torrent location": new_path,
-          },
-          `${movie.title} moved to "${new_path}"`,
-        );
-
-        radarr_cliente.setTorrentLocation(torrent.hash, new_path);
-        break;
-      }
+      radarr_cliente.setTorrentLocation(torrent.hash, new_path);
+    } else {
+      timeLogs(
+        `Not found match movie for ${torrent_name}`,
+        `Not found match movie for ${torrent_name}`,
+      );
     }
   }
 };
