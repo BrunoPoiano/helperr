@@ -1,8 +1,8 @@
 # Qbit-relocater
 
-Qbit-relocater is a script that connects with sonarr, radarr and qBittorrent and redirects torrents to the right folder.
+Qbit-Relocater is a script that seamlessly integrates with Sonarr, Radarr, and qBittorrent to relocate torrents to the correct folders.
 
-It moves the files without qbittorent losing link and without the necessity of doing hardlinks or radarr/sonarr moving/copying files
+It ensures that files and folders are renamed and moved without breaking qBittorrent's links, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This allows for a cleaner, more efficient media management workflow.
 
 ## Before Deployment
 
@@ -17,8 +17,7 @@ It moves the files without qbittorent losing link and without the necessity of d
 - in radarr/sonnar qBittorrent settings set `Content Layout` as Original
 
 ## Deployment
-
-[qbit-relocator image](https://hub.docker.com/repository/docker/brunopoiano/qbit-relocater/general)
+You can find the Docker image here: [qbit-relocator image](https://hub.docker.com/repository/docker/brunopoiano/qbit-relocater/general)
 
 ### using image
 in the same folder create a .env and a docker-compose.yaml

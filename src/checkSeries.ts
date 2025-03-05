@@ -115,6 +115,8 @@ const updateTorrent = async (serie: Series | Content, torrent: Torrents) => {
 	const series_name = split[split.length - 1];
 	let new_path = "";
 
+	timeLogs(`Series | Running update on ${torrent.name}`);
+
 	const torrent_contents = await sonarr_cliente.torrentFiles(torrent.hash);
 	if (torrent_contents.length > 1) {
 		//rename folder

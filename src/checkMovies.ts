@@ -7,6 +7,7 @@ import {
 	Movies,
 	prepareComparisonString,
 	timeLogs,
+	TorrentContents,
 	Torrents,
 } from "./utils.js";
 
@@ -118,7 +119,11 @@ const updateTorrent = async (movie: Movies | Content, torrent: Torrents) => {
 	const movie_name = movie_split[movie_split.length - 1];
 	let new_path = "";
 
-	const torrent_contents = await radarr_cliente.torrentFiles(torrent.hash);
+	timeLogs(`Movie | Running update on ${torrent.name}`);
+
+	const torrent_contents: any[] = await radarr_cliente.torrentFiles(
+		torrent.hash,
+	);
 
 	if (torrent_contents.length > 1) {
 		//rename folder
@@ -131,15 +136,19 @@ const updateTorrent = async (movie: Movies | Content, torrent: Torrents) => {
 
 		//rename files inside folder
 		for (const file of torrent_contents) {
-			if (![".txt", ".nfo"].some((value) => file.name.includes(value))) {
-				const extention = getFileExtension(file.name);
-				const old_file_path = file.name.split("/");
-				const updated_file_path = `${movie_name}/${old_file_path[1]}`;
+			const extention = getFileExtension(file.name);
+			const old_file_path = file.name.split("/");
+			const updated_file_path = `${movie_name}/${old_file_path[1]}`;
+			let new_name = `${movie_name}/${movie_name}.${extention}`;
 
+			if (
+				extention &&
+				["mp4", "mkv", "avi", "mov", "webm", "nfo"].includes(extention)
+			) {
 				await radarr_cliente.renameFile(
 					torrent.hash,
 					updated_file_path,
-					`${movie_name}/${movie_name}.${extention}`,
+					new_name,
 				);
 			}
 		}
