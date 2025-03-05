@@ -23,7 +23,7 @@ console.log(await radarr_cliente.getApiVersion());
 const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
 	try {
 		const all_torrents = await radarr_cliente.getAllData();
-		const torrents = [];
+		const torrents: Torrents[] = [];
 
 		for (const torrent of all_torrents.raw) {
 			if (

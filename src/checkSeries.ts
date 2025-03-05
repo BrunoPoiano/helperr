@@ -21,18 +21,19 @@ const sonarr_cliente = new QBittorrent({
 const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
 	try {
 		const all_torrents = await sonarr_cliente.getAllData();
-
-		const torrents = all_torrents.raw.filter((item: Torrents) => {
+		const torrents: Torrents[] = [];
+		for (const item of all_torrents.raw) {
 			if (
 				item.category === "tv-sonarr" &&
 				item.save_path === "/downloads/tv-sonarr"
 			) {
-				return {
+				torrents.push({
 					hash: item.hash,
 					name: item.name,
-				};
+					content_path: item.content_path,
+				});
 			}
-		});
+		}
 
 		return torrents;
 	} catch (error) {

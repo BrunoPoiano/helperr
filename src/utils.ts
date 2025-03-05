@@ -81,10 +81,11 @@ export const telegramBotChat = async (log: string) => {
 export const prepareComparisonString = (item: string): string => {
 	let name = item.toLowerCase();
 
-	name = name.replace(/s\d{2}e\d{2}/gi, "");
-	name = name.replace(/\b(19|20|21)\d{2}\b/g, "");
-	name = name.replace(/[\[\(].*?[\]\)]/g, "");
-	name = name.replace(/\s-\s\d{2}/g, "");
+	name = name.replace(/s\d{2}e\d{2}/gi, ""); // remove "S01E02"
+	name = name.replace(/\b(19|20|21)\d{2}\b/g, ""); // remove year
+	name = name.replace(/[\[\(].*?[\]\)]/g, ""); // remove content inside () and []
+	name = name.replace(/\s-\s\d{2}/g, ""); // remove ep pattern
+	name = name.replace(/:/g, ""); // remove :
 
 	const infoList = [
 		"amzn",
@@ -123,6 +124,7 @@ export const prepareComparisonString = (item: string): string => {
 		"mkv",
 		"mp4",
 		"avi",
+		"-successfulcrab",
 	];
 
 	for (const info of infoList) {
@@ -130,8 +132,8 @@ export const prepareComparisonString = (item: string): string => {
 		name = name.replace(regex, "");
 	}
 
-	name = name.replace(/\s*\.\s*/g, " ");
-	name = name.replace(/\s+/g, " ").trim();
+	name = name.replace(/\s*\.\s*/g, " "); // replace . surrounded by spaces with a single space
+	name = name.replace(/\s+/g, " ").trim(); // Normalize whitespace by collapsing multiple spaces into a single space and trimming
 
 	return name;
 };
