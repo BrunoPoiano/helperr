@@ -6,10 +6,12 @@ It ensures that files and folders are renamed and moved without breaking qBittor
 
 ## Before Deployment
 
-- both radarr and sonnar should be at least version 3+
-- ensure that qBittorrent in sonnar has the `tv-sonarr` category
-- ensure that qBittorrent in radarr has the `radarr` category
-- ensure that in radar/sonar `Completed Download Handling` is disabled
+- both radarr and sonnar should be at least **version 3+**
+- In qBittorrent: 
+    - The `tv-sonarr` category should be set for Sonarr
+    - The `radarr` category should be set for Radarr
+- radar/sonar
+    - `Completed Download Handling` must be `disabled`
 
 *recomended settings*
 - in qBittorrent check `Keep incomplete torrents in`
@@ -60,6 +62,11 @@ services:
     container_name: qbit-relocater
 ```
 
+start the container
+```bash
+docker compose up -d
+```
+
 ### using source code
 
 ```bash
@@ -85,15 +92,17 @@ run the container
 docker compose up -d
 ```
 
-test/run a manual scan movies
+## Manual Operations
+
+Run a manual scan movies
 ```bash
 docker exec qbit-relocater npm run checkMovies
 ```
-test/run a manual scan series
+Run a manual scan series
 ```bash
 docker exec qbit-relocater npm run checkSeries
 ```
-test telegram bot connection
+Test telegram bot connection
 ```bash
 docker exec qbit-relocater npm run testBot
 ```
