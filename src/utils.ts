@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { argv0 } from "process";
 dotenv.config();
 
-type Content = {
+export type Content = {
 	title: string;
 	path: string;
 };
@@ -23,6 +23,12 @@ export type Torrents = {
 	name: string;
 	category?: string;
 	save_path?: string;
+	content_path: string;
+};
+
+export type TorrentContents = {
+	index: string;
+	name: string;
 };
 
 export const timeLogs = async <T>(log: T, sendToBot?: string) => {
@@ -162,14 +168,15 @@ export const mediaBinarySearch = (
 		let middle = Math.floor((end + start) / 2);
 		const serie_title = prepareComparisonString(content_sorted[middle].title);
 
-		if (checkSimilar(serie_title, compare) === 100) {
+		if (serie_title === compare) {
 			return content_sorted[middle];
 		}
 
-		if (
-			compare === serie_title ||
-			compare.match(new RegExp(`\\b${serie_title}\\b`))
-		) {
+		if (checkSimilar(serie_title, compare) >= 95) {
+			return content_sorted[middle];
+		}
+
+		if (compare.match(new RegExp(`\\b${serie_title}\\b`))) {
 			return content_sorted[middle];
 		}
 
@@ -223,3 +230,8 @@ const LevenshteinDistance = (source: string, target: string): number => {
 
 	return matrix[source.length][source.length];
 };
+
+export function getFileExtension(filename: string) {
+	const match = filename.match(/\.([^.]*)$/);
+	return match ? match[1] : null;
+}
