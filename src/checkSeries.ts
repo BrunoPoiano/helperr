@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import { QBittorrent } from "@ctrl/qbittorrent";
 import {
+	Content,
+	getSeriesSeason,
 	mediaBinarySearch,
 	prepareComparisonString,
 	pushBinarySorted,
@@ -68,6 +70,7 @@ const getAllSeries = async (): Promise<Series[]> => {
 					series.push({
 						title: item.title,
 						path: item.path,
+						alternateTitles: item.alternateTitles,
 					});
 				}
 			});
@@ -97,21 +100,7 @@ export const seriesCompareAndChangeLocation = async () => {
 		const torrent_name = prepareComparisonString(torrent.name);
 		const serie = mediaBinarySearch(series, torrent_name);
 		if (serie) {
-			const split = serie.path.split("/");
-			const series_name = split[split.length - 1];
-			const new_path = `${process.env.SONARR_DOWNLOAD_PATH}${series_name}`;
-
-			timeLogs(
-				{
-					"torrent name": torrent.name,
-					"series title": serie.title,
-					"series sonarr path": serie.path,
-					"new torrent location": new_path,
-				},
-				`A new ${serie.title} episode was moved to "${new_path}"`,
-			);
-
-			sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
+			await updateTorrent(serie, torrent);
 		} else {
 			timeLogs(
 				`Not found match series for ${torrent_name}`,
@@ -119,6 +108,44 @@ export const seriesCompareAndChangeLocation = async () => {
 			);
 		}
 	}
+};
+
+const updateTorrent = async (serie: Series | Content, torrent: Torrents) => {
+	const split = serie.path.split("/");
+	const series_name = split[split.length - 1];
+	let new_path = "";
+
+	const torrent_contents = await sonarr_cliente.torrentFiles(torrent.hash);
+	if (torrent_contents.length > 1) {
+		//rename folder
+		const old_path = torrent.content_path.split("/");
+		const season = getSeriesSeason(old_path[old_path.length - 1]);
+
+		await sonarr_cliente.renameFolder(
+			torrent.hash,
+			old_path[old_path.length - 1],
+			season,
+		);
+
+		//change the location
+		new_path = `${process.env.SONARR_DOWNLOAD_PATH}${series_name}`;
+		await sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
+	} else {
+		//change the location and add folders
+		const season = getSeriesSeason(torrent.name);
+		new_path = `${process.env.SONARR_DOWNLOAD_PATH}${series_name}/${season}`;
+		sonarr_cliente.setTorrentLocation(torrent.hash, new_path);
+	}
+
+	await timeLogs(
+		{
+			"torrent name": torrent.name,
+			"series title": serie.title,
+			"series sonarr path": serie.path,
+			"new torrent location": new_path,
+		},
+		`A new ${serie.title} episode was moved to "${new_path}"`,
+	);
 };
 
 if (import.meta.url === `file://${process.argv[1]}`) {

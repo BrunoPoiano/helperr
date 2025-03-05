@@ -16,7 +16,11 @@ export type Movies = Content & {
 	};
 };
 
-export type Series = Content & {};
+export type Series = Content & {
+	alternateTitles: {
+		title: string;
+	}[];
+};
 
 export type Torrents = {
 	hash: string;
@@ -156,9 +160,9 @@ export const pushBinarySorted = (series: Series[], serie: Series): Series[] => {
 };
 
 export const mediaBinarySearch = (
-	content: Content[],
+	content: any[],
 	compare: string,
-): Content | null => {
+): any | null => {
 	let start = 0;
 	let end = content.length - 1;
 
@@ -166,6 +170,7 @@ export const mediaBinarySearch = (
 		a.title.localeCompare(b.title),
 	);
 
+	// Search Main Title
 	while (end >= start) {
 		let middle = Math.floor((end + start) / 2);
 		const serie_title = prepareComparisonString(content_sorted[middle].title);
@@ -186,6 +191,27 @@ export const mediaBinarySearch = (
 			end = middle - 1;
 		} else {
 			start = middle + 1;
+		}
+	}
+
+	// Searching Alternative titles
+	for (const item of content_sorted) {
+		if (item.alternateTitles.length > 0) {
+			for (const alt_title of item.alternateTitles) {
+				const item_title = prepareComparisonString(alt_title.title);
+
+				if (item_title === compare) {
+					return item;
+				}
+
+				if (checkSimilar(item_title, compare) >= 95) {
+					return item;
+				}
+
+				if (compare.match(new RegExp(`\\b${item_title}\\b`))) {
+					return item;
+				}
+			}
 		}
 	}
 
@@ -233,7 +259,27 @@ const LevenshteinDistance = (source: string, target: string): number => {
 	return matrix[source.length][source.length];
 };
 
-export function getFileExtension(filename: string) {
+export const getFileExtension = (filename: string): string | null => {
 	const match = filename.match(/\.([^.]*)$/);
 	return match ? match[1] : null;
-}
+};
+
+export const getSeriesSeason = (torrent_name: string): string => {
+	const name = torrent_name.replace(".", " ");
+
+	const series_season = name.match(/s\d{2}e\d{2}/i); // check for "S00E00"
+	if (series_season) {
+		const season = series_season[0].match(/[Ss](\d{2})[Ee]\d{2}/);
+		if (season) {
+			return `Season ${season[1]}`;
+		}
+	}
+
+	const whole_season = name.match(/[sS]01/); // check for "S00"
+	if (whole_season) {
+		const season = whole_season[0].replace("S", "").replace("s", "");
+		return `Season ${season}`;
+	}
+
+	return "";
+};

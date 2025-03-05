@@ -120,7 +120,7 @@ const updateTorrent = async (movie: Movies | Content, torrent: Torrents) => {
 
 	const torrent_contents = await radarr_cliente.torrentFiles(torrent.hash);
 
-	if (torrent_contents.length > 0) {
+	if (torrent_contents.length > 1) {
 		//rename folder
 		const old_path = torrent.content_path.split("/");
 		await radarr_cliente.renameFolder(
@@ -162,7 +162,7 @@ const updateTorrent = async (movie: Movies | Content, torrent: Torrents) => {
 		radarr_cliente.setTorrentLocation(torrent.hash, new_path);
 	}
 
-	timeLogs(
+	await timeLogs(
 		{
 			"torrent name": torrent.name,
 			"movie title": movie.title,
