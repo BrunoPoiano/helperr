@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { timeLogs } from "./utils";
 dotenv.config();
 
 export const missingSeries = async () => {
@@ -16,6 +17,8 @@ export const missingSeries = async () => {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ name: "MissingEpisodeSearch", monitored: true }),
+	}).then(() => {
+		timeLogs(`running Missing Episode Search`);
 	});
 };
 
