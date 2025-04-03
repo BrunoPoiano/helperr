@@ -4,6 +4,12 @@ Qbit-Relocater is a script that seamlessly integrates with Sonarr, Radarr, and q
 
 It ensures that files and folders are renamed and moved without breaking qBittorrent's links, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This allows for a cleaner, more efficient media management workflow.
 
+## Actions
+
+- every 10 minutes run a check for moving files
+- once a day rename movie files
+- once a day check for missing movies/series eps
+
 ## Before Deployment
 
 - both radarr and sonnar should be at least **version 3+**
@@ -106,3 +112,13 @@ Test telegram bot connection
 ```bash
 docker exec qbit-relocater npm run testBot
 ```
+
+Run a manual scan for missing movies
+```bash
+docker exec qbit-relocater npm run missingMovies
+```
+Run a manual scan for missing series eps
+```bash
+docker exec qbit-relocater npm run missingSeries
+```
+

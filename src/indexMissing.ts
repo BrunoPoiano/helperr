@@ -1,5 +1,5 @@
-import { missingMovies } from "./missingMovies";
-import { missingSeries } from "./missingSeries";
+import { missingMovies } from "./missingMovies.js";
+import { missingSeries } from "./missingSeries.js";
 
 missingMovies();
 missingSeries();
