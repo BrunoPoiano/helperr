@@ -8,7 +8,10 @@
     "checkMovies": "node dist/checkMovies.js",
     "checkSeries": "node dist/checkSeries.js",
     "testBot": "node dist/testTelegramBot.js",
-    "renameFiles": "node dist/renameFiles.js"
+    "renameFiles": "node dist/renameFiles.js",
+    "checkMissing": "node dist/indexMissing.js",
+    "missingSeries": "node dist/missingSeries.js",
+    "missingMovies": "node dist/missingMovies.js"
   },
   "exports": "./src/index.js",
   "author": "",
