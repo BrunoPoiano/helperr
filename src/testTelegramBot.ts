@@ -1,3 +1,5 @@
-import { telegramBotChat } from "./utils.js";
+import { timeLogs, TimeLogsQueue } from "./timeLogs.js";
 
-telegramBotChat("Testing Telegram bot");
+const queue = new TimeLogsQueue();
+
+queue.onqueue(timeLogs("Telegram test", "telegram test"));

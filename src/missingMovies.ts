@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { timeLogs } from "./utils";
+import { timeLogs, TimeLogsQueue } from "./timeLogs.js";
 dotenv.config();
 
 export const missingMovies = async () => {
@@ -10,6 +10,8 @@ export const missingMovies = async () => {
 		return;
 	}
 
+	const queue = new TimeLogsQueue();
+
 	await fetch(`${apiUrl}/api/v3/command`, {
 		method: "POST",
 		headers: {
@@ -18,7 +20,12 @@ export const missingMovies = async () => {
 		},
 		body: JSON.stringify({ name: "MissingMoviesSearch", monitored: true }),
 	}).then(() => {
-		timeLogs(`running Missing Movies Search`);
+		queue.onqueue(
+			timeLogs(
+				`running Missing Movies Search`,
+				`running Missing Movies Search`,
+			),
+		);
 	});
 };
 

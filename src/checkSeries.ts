@@ -5,14 +5,13 @@ import {
 	getSeriesSeason,
 	mediaBinarySearch,
 	prepareComparisonString,
-	pushBinarySorted,
 	Series,
-	timeLogs,
 	Torrents,
 } from "./utils.js";
-import { warn } from "console";
+import { timeLogs, TimeLogsQueue } from "./timeLogs.js";
 
 dotenv.config();
+const queue = new TimeLogsQueue();
 
 const sonarr_cliente = new QBittorrent({
 	baseUrl: process.env.SONARR_QBITTORRENT_URL,
@@ -52,7 +51,7 @@ const getAllSeries = async (): Promise<Series[]> => {
 		const apiUrl = process.env.SONARR_URL;
 
 		if (!apiKey || !apiUrl) {
-			timeLogs("No key or url supplied for sonarr");
+			queue.onqueue(timeLogs("No key or url supplied for sonarr"));
 			return series;
 		}
 
@@ -85,9 +84,9 @@ const getAllSeries = async (): Promise<Series[]> => {
 
 export const seriesCompareAndChangeLocation = async () => {
 	const torrents = await getAllSeriesTorrents();
-	timeLogs("running series check");
+	queue.onqueue(timeLogs("running series check"));
 	if (torrents.length === 0) {
-		timeLogs("No new series files to update");
+		queue.onqueue(timeLogs("No new series files to update"));
 		return;
 	}
 
@@ -98,9 +97,11 @@ export const seriesCompareAndChangeLocation = async () => {
 		const serie = mediaBinarySearch(series, torrent_name);
 
 		if (serie === null) {
-			timeLogs(
-				`Not found match series for ${torrent_name}`,
-				`Not found match series for ${torrent_name}`,
+			queue.onqueue(
+				timeLogs(
+					`Not found match series for ${torrent_name}`,
+					`Not found match series for ${torrent_name}`,
+				),
 			);
 			continue;
 		}
@@ -114,7 +115,7 @@ const updateTorrent = async (serie: Series | Content, torrent: Torrents) => {
 	const series_name = split[split.length - 1];
 	let new_path = "";
 
-	timeLogs(`Series | Running update on ${torrent.name}`);
+	queue.onqueue(timeLogs(`Series | Running update on ${torrent.name}`));
 
 	const torrent_contents = await sonarr_cliente.torrentFiles(torrent.hash);
 	if (torrent_contents.length > 1) {
@@ -147,14 +148,16 @@ const updateTorrent = async (serie: Series | Content, torrent: Torrents) => {
 		});
 	}
 
-	await timeLogs(
-		{
-			"torrent name": torrent.name,
-			"series title": serie.title,
-			"series sonarr path": serie.path,
-			"new torrent location": new_path,
-		},
-		`A new ${serie.title} episode was moved to "${new_path}"`,
+	queue.onqueue(
+		timeLogs(
+			{
+				"torrent name": torrent.name,
+				"series title": serie.title,
+				"series sonarr path": serie.path,
+				"new torrent location": new_path,
+			},
+			`A new ${serie.title} episode was moved to "${new_path}"`,
+		),
 	);
 };
 
