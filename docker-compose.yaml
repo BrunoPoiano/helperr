@@ -1,6 +1,8 @@
 services:
   qbit-relocater:
     build: .
+    environment:
+      TZ: America/Sao_Paulo
     env_file: .env
     restart: unless-stopped
     container_name: qbit-relocater

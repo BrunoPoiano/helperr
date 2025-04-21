@@ -13,7 +13,7 @@ It ensures that files and folders are renamed and moved without breaking qBittor
 ## Before Deployment
 
 - both radarr and sonnar should be at least **version 3+**
-- In qBittorrent: 
+- In qBittorrent:
     - The `tv-sonarr` category should be set for Sonarr
     - The `radarr` category should be set for Radarr
 - radar/sonar
@@ -25,7 +25,7 @@ It ensures that files and folders are renamed and moved without breaking qBittor
 - in radarr/sonnar qBittorrent settings set `Content Layout` as Original
 
 ## Deployment
-You can find the Docker image here: [qbit-relocator image](https://hub.docker.com/repository/docker/brunopoiano/qbit-relocater/general)
+You can find the Docker image here: [qbit-relocator image](https://hub.docker.com/r/brunopoiano/qbit-relocater)
 
 ### using image
 in the same folder create a .env and a docker-compose.yaml
@@ -121,4 +121,3 @@ Run a manual scan for missing series eps
 ```bash
 docker exec qbit-relocater npm run missingSeries
 ```
-
