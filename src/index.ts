@@ -1,5 +1,5 @@
-import { moviesCompareAndChangeLocation } from "./checkMovies.js";
-import { seriesCompareAndChangeLocation } from "./checkSeries.js";
+import { moviesCompareAndChangeLocation } from "./Movies/checkMovies.js";
+import { seriesCompareAndChangeLocation } from "./Series/checkSeries.js";
 
 moviesCompareAndChangeLocation();
 seriesCompareAndChangeLocation();
