@@ -3,12 +3,13 @@ import {
   checkMissingResponse,
   IsNumberOrDefault,
   IsString,
+  isValidObject,
   returnAlternateTitle,
-} from "../utils/utils";
+} from "../utils/utils.js";
 
 export const returnSeriesList = (data: unknown[]): Series[] => {
   return data.reduce<Series[]>((prev, item) => {
-    if (!item || typeof item !== "object" || !("id" in item)) return prev;
+    if (!isValidObject(item) || !("id" in item)) return prev;
 
     const record = item as Record<string, unknown>;
 
@@ -28,7 +29,7 @@ export const returnSeriesList = (data: unknown[]): Series[] => {
 
 const RecordsArrayFormater = (data: unknown[]): MissingSeriesRecordType[] => {
   return data.reduce<MissingSeriesRecordType[]>((prev, item) => {
-    if (!item || typeof item !== "object" || !("id" in item)) return prev;
+    if (!isValidObject(item) || !("id" in item)) return prev;
 
     const record = item as Record<string, unknown>;
 

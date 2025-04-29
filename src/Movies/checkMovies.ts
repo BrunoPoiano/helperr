@@ -8,6 +8,7 @@ import {
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Movies, Torrents } from "../types.js";
+import { returnMoviesList } from "./services.js";
 
 dotenv.config();
 
@@ -32,7 +33,7 @@ const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
 
 const getAllMovies = async (): Promise<Movies[]> => {
   try {
-    const movies: Movies[] = [];
+    let movies: Movies[] = [];
     const radarr_url = process.env.RADARR_URL;
     const radarr_key = process.env.RADARR_API_KEY;
 
@@ -51,14 +52,7 @@ const getAllMovies = async (): Promise<Movies[]> => {
         return response.json();
       })
       .then((data) => {
-        for (const element of data) {
-          movies.push({
-            id: element.id,
-            title: element.title,
-            path: element.path,
-            alternateTitles: element.alternateTitles,
-          });
-        }
+        movies = returnMoviesList(data);
       });
 
     return movies;

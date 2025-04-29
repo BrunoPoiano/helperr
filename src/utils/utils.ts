@@ -195,7 +195,7 @@ export const getFileExtension = (filename: string): string | null => {
 export const getSeriesSeason = (torrent_name: string): string => {
   const name = torrent_name.replace(".", " ");
 
-  const series_season = name.match(/s\d{2}e\d{2}/i); // check for "S00E00"
+  const series_season = name.match(/s\d{2}e\d{2}/i); // check for "SXXEXX"
   if (series_season) {
     const season = series_season[0].match(/[Ss](\d{2})[Ee]\d{2}/);
     if (season) {
@@ -203,13 +203,17 @@ export const getSeriesSeason = (torrent_name: string): string => {
     }
   }
 
-  const whole_season = name.match(/[sS]01/); // check for "S00"
+  const whole_season = name.match(/[sS]01/); // check for "SXX"
   if (whole_season) {
     const season = whole_season[0].replace("S", "").replace("s", "");
     return `Season ${season}`;
   }
 
   return "";
+};
+
+export const isValidObject = (obj: unknown): obj is Record<string, unknown> => {
+  return typeof obj === "object" && obj !== null;
 };
 
 export const IsNumberOrDefault = (value: unknown, defaultValue = 0): number => {
@@ -241,7 +245,7 @@ export const IsString = <T = null>(
 
 export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
   return data.reduce<AlternateTitles[]>((prev, item) => {
-    if (!item || typeof item !== "object" || !("title" in item)) return prev;
+    if (!isValidObject(item) || !("title" in item)) return prev;
 
     const record = item as Record<string, unknown>;
 
@@ -260,7 +264,7 @@ export const returnTorrentList = (data: unknown): Torrents[] => {
     return [];
 
   return data.raw.reduce<Torrents[]>((prev, item) => {
-    if (!item || typeof item !== "object") return prev;
+    if (!isValidObject(item)) return prev;
 
     const record = item as Record<string, unknown>;
 
@@ -283,12 +287,7 @@ export const returnTorrentList = (data: unknown): Torrents[] => {
 
 export const checkMissingResponse = <T = object>(data: unknown): T => {
   return (
-    typeof data === "object" &&
-    data !== null &&
-    "records" in data &&
-    Array(data.records)
-      ? data
-      : {}
+    isValidObject(data) && "records" in data && Array(data.records) ? data : {}
   ) as T;
 };
 
