@@ -8,18 +8,25 @@ import {
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Movies, Torrents } from "../types.js";
-import { returnMoviesList } from "./services.js";
+import { getMoviesList } from "./services.js";
 
 dotenv.config();
 
 const queue = new TimeLogsQueue();
 
+/**
+ * QBittorrent client for Radarr
+ */
 export const radarr_cliente = new QBittorrent({
   baseUrl: process.env.RADARR_QBITTORRENT_URL,
   username: process.env.RADARR_QBITTORRENT_USERNAME,
   password: process.env.RADARR_QBITTORRENT_PASSWORD,
 });
 
+/**
+ * Fetches all movie torrents from qBittorrent
+ * @returns Array of torrents
+ */
 const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await radarr_cliente.getAllData();
@@ -31,6 +38,10 @@ const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
   }
 };
 
+/**
+ * Fetches all movies from Radarr API
+ * @returns Array of movies
+ */
 const getAllMovies = async (): Promise<Movies[]> => {
   try {
     let movies: Movies[] = [];
@@ -52,7 +63,7 @@ const getAllMovies = async (): Promise<Movies[]> => {
         return response.json();
       })
       .then((data) => {
-        movies = returnMoviesList(data);
+        movies = getMoviesList(data);
       });
 
     return movies;
@@ -63,6 +74,9 @@ const getAllMovies = async (): Promise<Movies[]> => {
   }
 };
 
+/**
+ * Compares torrents with movies and updates locations
+ */
 export const moviesCompareAndChangeLocation = async () => {
   queue.onqueue(timeLogs("running movies check"));
 
@@ -91,6 +105,11 @@ export const moviesCompareAndChangeLocation = async () => {
   }
 };
 
+/**
+ * Updates torrent name and location based on movie metadata
+ * @param movie Movie object
+ * @param torrent Torrent object
+ */
 const updateTorrent = async (movie: Movies, torrent: Torrents) => {
   const movie_split = movie.path.split("/");
   const movie_name = movie_split[movie_split.length - 1];

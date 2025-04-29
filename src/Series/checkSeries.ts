@@ -8,17 +8,22 @@ import {
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Series, Torrents } from "../types.js";
-import { returnSeriesList } from "./services.js";
+import { getSeriesList } from "./services.js";
 
 dotenv.config();
 const queue = new TimeLogsQueue();
 
+// Initialize the QBittorrent client for Sonarr
 const sonarr_cliente = new QBittorrent({
   baseUrl: process.env.SONARR_QBITTORRENT_URL,
   username: process.env.SONARR_QBITTORRENT_USERNAME,
   password: process.env.SONARR_QBITTORRENT_PASSWORD,
 });
 
+/**
+ * Fetches all torrents from QBittorrent
+ * @returns Array of torrents
+ */
 const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await sonarr_cliente.getAllData();
@@ -30,6 +35,10 @@ const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
   }
 };
 
+/**
+ * Retrieves all series from Sonarr API
+ * @returns Array of series
+ */
 const getAllSeries = async (): Promise<Series[]> => {
   try {
     let series: Series[] = [];
@@ -51,7 +60,7 @@ const getAllSeries = async (): Promise<Series[]> => {
         return response.json();
       })
       .then((data) => {
-        series = returnSeriesList(data);
+        series = getSeriesList(data);
       });
 
     return series;
@@ -62,6 +71,9 @@ const getAllSeries = async (): Promise<Series[]> => {
   }
 };
 
+/**
+ * Main function to compare torrents with series and update their locations
+ */
 export const seriesCompareAndChangeLocation = async () => {
   const torrents = await getAllSeriesTorrents();
   queue.onqueue(timeLogs("running series check"));
@@ -90,6 +102,11 @@ export const seriesCompareAndChangeLocation = async () => {
   }
 };
 
+/**
+ * Updates a torrent's location based on the series information
+ * @param serie The series object
+ * @param torrent The torrent to update
+ */
 const updateTorrent = async (serie: Series, torrent: Torrents) => {
   const split = serie.path.split("/");
   const series_name = split[split.length - 1];
@@ -141,6 +158,7 @@ const updateTorrent = async (serie: Series, torrent: Torrents) => {
   );
 };
 
+// Execute the main function if this file is run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   seriesCompareAndChangeLocation();
 }

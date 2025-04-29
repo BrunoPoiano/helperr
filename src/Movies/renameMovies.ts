@@ -2,10 +2,15 @@ import dotenv from "dotenv";
 import { radarr_cliente } from "./checkMovies.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Movies } from "../types.js";
+import { getMoviesList } from "./services.js";
 dotenv.config();
 
 const queue = new TimeLogsQueue();
 
+/**
+ * Gets the count of torrents currently in Radarr
+ * @returns The number of torrents or -1 if there's an error
+ */
 const getMoviesTorrentsLength = async (): Promise<number> => {
   try {
     const all_torrents = await radarr_cliente.getAllData();
@@ -17,9 +22,13 @@ const getMoviesTorrentsLength = async (): Promise<number> => {
   }
 };
 
+/**
+ * Retrieves all movies from Radarr that need renaming
+ * @returns Array of Movies objects
+ */
 const getAllMovies = async (): Promise<Movies[]> => {
   try {
-    const movies: Movies[] = [];
+    let movies: Movies[] = [];
     const radarr_url = process.env.RADARR_URL;
     const radarr_key = process.env.RADARR_API_KEY;
 
@@ -38,25 +47,7 @@ const getAllMovies = async (): Promise<Movies[]> => {
         return response.json();
       })
       .then((data) => {
-        for (const element of data) {
-          const path = element.path?.replace("/downloads/", "");
-
-          if (
-            element.movieFile?.relativePath &&
-            !element.movieFile?.relativePath?.includes(path || "")
-          ) {
-            movies.push({
-              id: element.id,
-              title: element.title,
-              path: element.path,
-              movieFileId: element.movieFileId,
-              movieFile: {
-                path: element.movieFile.path,
-                relativePath: element.movieFile.relativePath,
-              },
-            });
-          }
-        }
+        movies = getMoviesList(data);
       });
 
     return movies;
@@ -67,6 +58,10 @@ const getAllMovies = async (): Promise<Movies[]> => {
   }
 };
 
+/**
+ * Renames movie files in Radarr to match the correct format
+ * Only runs when no torrents are active
+ */
 const renameRadarrMovies = async () => {
   const radarr_url = process.env.RADARR_URL;
   const radarr_key = process.env.RADARR_API_KEY;

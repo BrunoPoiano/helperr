@@ -2,17 +2,21 @@ import dotenv from "dotenv";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import {
   calcHowManyMinutesSinceLastSearch,
-  IsNumberOrDefault,
+  isNumberOrDefault,
 } from "../utils/utils.js";
-import { ReturnSeriesRecordsIds } from "./services.js";
+import { getSeriesList, getSeriesRecordIds } from "./services.js";
 dotenv.config();
 
+/**
+ * Fetches and returns IDs of missing episodes that haven't been searched recently
+ * @returns Promise containing array of episode IDs
+ */
 const getAlltheMissingEps = async (): Promise<number[]> => {
   const apiKey = process.env.SONARR_API_KEY;
   const apiUrl = process.env.SONARR_URL;
-  const minutesSinceLastSearch = IsNumberOrDefault(
+  const minutesSinceLastSearch = isNumberOrDefault(
     process.env.SONARR_SEARCH_MISSING_EPS,
-    8888,
+    5760,
   );
 
   if (!apiUrl || !apiKey) {
@@ -34,7 +38,7 @@ const getAlltheMissingEps = async (): Promise<number[]> => {
     );
 
     const data = await response.json();
-    const missingEps = ReturnSeriesRecordsIds(data);
+    const missingEps = getSeriesRecordIds(data);
 
     for (const ep of missingEps) {
       if (
@@ -52,6 +56,9 @@ const getAlltheMissingEps = async (): Promise<number[]> => {
   return epsIds;
 };
 
+/**
+ * Initiates a search for missing episodes in Sonarr
+ */
 export const missingSeries = async () => {
   const apiKey = process.env.SONARR_API_KEY;
   const apiUrl = process.env.SONARR_URL;

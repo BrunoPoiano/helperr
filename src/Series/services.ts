@@ -1,22 +1,22 @@
 import type { MissingSeriesRecordType, MissingType, Series } from "../types";
 import {
   checkMissingResponse,
-  IsNumberOrDefault,
-  IsString,
+  isNumberOrDefault,
+  isString,
   isValidObject,
   returnAlternateTitle,
 } from "../utils/utils.js";
 
-export const returnSeriesList = (data: unknown[]): Series[] => {
+export const getSeriesList = (data: unknown[]): Series[] => {
   return data.reduce<Series[]>((prev, item) => {
     if (!isValidObject(item) || !("id" in item)) return prev;
 
     const record = item as Record<string, unknown>;
 
     const series: Series = {
-      id: IsNumberOrDefault(record.id, 0),
-      title: IsString(record.title, ""),
-      path: IsString(record.path, ""),
+      id: isNumberOrDefault(record.id, 0),
+      title: isString(record.title, ""),
+      path: isString(record.path, ""),
       alternateTitles: returnAlternateTitle(
         Array.isArray(record.alternateTitles) ? record.alternateTitles : [],
       ),
@@ -34,11 +34,11 @@ const RecordsArrayFormater = (data: unknown[]): MissingSeriesRecordType[] => {
     const record = item as Record<string, unknown>;
 
     const resp: MissingSeriesRecordType = {
-      seriesId: IsNumberOrDefault(record.seriesId, 0),
-      airDate: IsString(record.airDate),
-      airDateUtc: IsString(record.airDateUtc),
-      lastSearchTime: IsString(record.lastSearchTime),
-      id: IsNumberOrDefault(record.id, 0),
+      seriesId: isNumberOrDefault(record.seriesId, 0),
+      airDate: isString(record.airDate),
+      airDateUtc: isString(record.airDateUtc),
+      lastSearchTime: isString(record.lastSearchTime),
+      id: isNumberOrDefault(record.id, 0),
     };
 
     prev.push(resp);
@@ -47,15 +47,15 @@ const RecordsArrayFormater = (data: unknown[]): MissingSeriesRecordType[] => {
   }, []);
 };
 
-export const ReturnSeriesRecordsIds = (
+export const getSeriesRecordIds = (
   data: unknown,
 ): MissingSeriesRecordType[] => {
   const response = checkMissingResponse<MissingType>(data);
 
   const missingSeriesObj: MissingType = {
-    page: IsNumberOrDefault(response.page, 0),
-    pageSize: IsNumberOrDefault(response.pageSize, 0),
-    totalRecords: IsNumberOrDefault(response.totalRecords, 0),
+    page: isNumberOrDefault(response.page, 0),
+    pageSize: isNumberOrDefault(response.pageSize, 0),
+    totalRecords: isNumberOrDefault(response.totalRecords, 0),
     records: [],
   };
 
