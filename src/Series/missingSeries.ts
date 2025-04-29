@@ -3,8 +3,8 @@ import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import {
   calcHowManyMinutesSinceLastSearch,
   IsNumberOrDefault,
-  ReturnSeriesRecordsIds,
 } from "../utils/utils.js";
+import { ReturnSeriesRecordsIds } from "./services.js";
 dotenv.config();
 
 const getAlltheMissingEps = async (): Promise<number[]> => {
@@ -23,7 +23,7 @@ const getAlltheMissingEps = async (): Promise<number[]> => {
 
   try {
     const response = await fetch(
-      `${apiUrl}/api/v3/wanted/missing?page=1&pageSize=100&sortDirection=descending&sortKey=episodes.airDateUtc&monitored=true`,
+      `${apiUrl}/api/v3/wanted/missing?page=1&pageSize=1000&sortDirection=descending&sortKey=episodes.airDateUtc&monitored=true`,
       {
         method: "GET",
         headers: {

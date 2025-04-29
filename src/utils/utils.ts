@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 import type {
+  AlternateTitles,
   MissingSeriesRecordType,
   MissingType,
   Movies,
   Series,
+  Torrents,
 } from "../types";
 dotenv.config();
 
@@ -122,7 +124,7 @@ export const mediaBinarySearch = (
   // Searching Alternative titles
   // animes and foreign titles
   for (const item of content_sorted) {
-    if ("alternateTitles" in item && item.alternateTitles.length > 0) {
+    if (item.alternateTitles.length > 0) {
       for (const alt_title of item.alternateTitles) {
         const item_title = prepareComparisonString(alt_title.title);
 
@@ -237,7 +239,49 @@ export const IsString = <T = null>(
   return defaultValue;
 };
 
-const checkMissingResponse = <T = object>(data: unknown): T => {
+export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
+  return data.reduce<AlternateTitles[]>((prev, item) => {
+    if (!item || typeof item !== "object" || !("title" in item)) return prev;
+
+    const record = item as Record<string, unknown>;
+
+    prev.push({ title: IsString(record.title) });
+    return prev;
+  }, []);
+};
+
+export const returnTorrentList = (data: unknown): Torrents[] => {
+  if (
+    !data ||
+    typeof data !== "object" ||
+    !("raw" in data) ||
+    !Array.isArray(data.raw)
+  )
+    return [];
+
+  return data.raw.reduce<Torrents[]>((prev, item) => {
+    if (!item || typeof item !== "object") return prev;
+
+    const record = item as Record<string, unknown>;
+
+    if (
+      record.category === "tv-sonarr" &&
+      record.save_path === "/downloads/tv-sonarr"
+    ) {
+      return prev;
+    }
+
+    prev.push({
+      hash: IsString(record.hash),
+      name: IsString(record.name),
+      content_path: IsString(record.content_path),
+    });
+
+    return prev;
+  }, []);
+};
+
+export const checkMissingResponse = <T = object>(data: unknown): T => {
   return (
     typeof data === "object" &&
     data !== null &&
@@ -246,45 +290,6 @@ const checkMissingResponse = <T = object>(data: unknown): T => {
       ? data
       : {}
   ) as T;
-};
-
-const RecordsArrayFormater = (data: unknown[]): MissingSeriesRecordType[] => {
-  return data.reduce<MissingSeriesRecordType[]>((prev, item) => {
-    if (!item || typeof item !== "object" || !("id" in item)) return prev;
-
-    const record = item as Record<string, unknown>;
-
-    const resp: MissingSeriesRecordType = {
-      seriesId: IsNumberOrDefault(record.seriesId, 0),
-      airDate: IsString(record.airDate),
-      airDateUtc: IsString(record.airDateUtc),
-      lastSearchTime: IsString(record.lastSearchTime),
-      id: IsNumberOrDefault(record.id, 0),
-    };
-
-    prev.push(resp);
-
-    return prev;
-  }, []);
-};
-
-export const ReturnSeriesRecordsIds = (
-  data: unknown,
-): MissingSeriesRecordType[] => {
-  const response = checkMissingResponse<MissingType>(data);
-
-  const missingSeriesObj: MissingType = {
-    page: IsNumberOrDefault(response.page, 0),
-    pageSize: IsNumberOrDefault(response.pageSize, 0),
-    totalRecords: IsNumberOrDefault(response.totalRecords, 0),
-    records: [],
-  };
-
-  if (missingSeriesObj.totalRecords === 0) {
-    return [];
-  }
-
-  return RecordsArrayFormater(response.records);
 };
 
 export const calcHowManyMinutesSinceLastSearch = (

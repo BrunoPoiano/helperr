@@ -4,9 +4,11 @@ import {
   getSeriesSeason,
   mediaBinarySearch,
   prepareComparisonString,
+  returnTorrentList,
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Series, Torrents } from "../types.js";
+import { returnSeriesList } from "./services.js";
 
 dotenv.config();
 const queue = new TimeLogsQueue();
@@ -20,21 +22,7 @@ const sonarr_cliente = new QBittorrent({
 const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await sonarr_cliente.getAllData();
-    const torrents: Torrents[] = [];
-    for (const item of all_torrents.raw) {
-      if (
-        item.category === "tv-sonarr" &&
-        item.save_path === "/downloads/tv-sonarr"
-      ) {
-        torrents.push({
-          hash: item.hash,
-          name: item.name,
-          content_path: item.content_path,
-        });
-      }
-    }
-
-    return torrents;
+    return returnTorrentList(all_torrents);
   } catch (error) {
     console.error("Error getting sonarr torrents");
     console.error(error);
@@ -44,7 +32,7 @@ const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
 
 const getAllSeries = async (): Promise<Series[]> => {
   try {
-    const series: Series[] = [];
+    let series: Series[] = [];
     const apiKey = process.env.SONARR_API_KEY;
     const apiUrl = process.env.SONARR_URL;
 
@@ -63,14 +51,7 @@ const getAllSeries = async (): Promise<Series[]> => {
         return response.json();
       })
       .then((data) => {
-        for (const item of data) {
-          series.push({
-            id: item.id,
-            title: item.title,
-            path: item.path,
-            alternateTitles: item.alternateTitles,
-          });
-        }
+        series = returnSeriesList(data);
       });
 
     return series;

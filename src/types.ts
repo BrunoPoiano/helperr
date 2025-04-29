@@ -13,6 +13,10 @@ export type MissingSeriesRecordType = {
   id: number;
 };
 
+export type AlternateTitles = {
+  title: string;
+};
+
 export type Movies = {
   id: number;
   title: string;
@@ -22,18 +26,14 @@ export type Movies = {
     path: string;
     relativePath: string;
   };
-  alternateTitles: {
-    title: string;
-  }[];
+  alternateTitles: AlternateTitles[];
 };
 
 export type Series = {
   id: number;
   title: string;
   path: string;
-  alternateTitles: {
-    title: string;
-  }[];
+  alternateTitles: AlternateTitles[];
 };
 
 export type Torrents = {

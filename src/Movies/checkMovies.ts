@@ -4,6 +4,7 @@ import {
   getFileExtension,
   mediaBinarySearch,
   prepareComparisonString,
+  returnTorrentList,
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Movies, Torrents } from "../types.js";
@@ -21,22 +22,7 @@ export const radarr_cliente = new QBittorrent({
 const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await radarr_cliente.getAllData();
-    const torrents: Torrents[] = [];
-
-    for (const torrent of all_torrents.raw) {
-      if (
-        torrent.category === "radarr" &&
-        torrent.save_path === "/downloads/radarr"
-      ) {
-        torrents.push({
-          hash: torrent.hash,
-          name: torrent.name,
-          content_path: torrent.content_path,
-        });
-      }
-    }
-
-    return torrents;
+    return returnTorrentList(all_torrents);
   } catch (error) {
     console.error("Error getting radarr torrents");
     console.error(error);
