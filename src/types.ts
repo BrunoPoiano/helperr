@@ -2,10 +2,10 @@ export type MissingType = {
   page: number;
   pageSize: number;
   totalRecords: number;
-  records: MissingSeriesRecordType[];
+  records: MissingRecordType[];
 };
 
-export type MissingSeriesRecordType = {
+export type MissingRecordType = {
   seriesId: number;
   airDate: string;
   airDateUtc: string;

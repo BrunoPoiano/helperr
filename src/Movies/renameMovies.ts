@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
-import { radarr_cliente } from "./checkMovies.js";
+import { getAllMovies, radarr_cliente } from "./checkMovies.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
 import type { Movies } from "../types.js";
 import { getMoviesList } from "./services.js";
+import { countImdbidTags } from "../utils/utils.js";
 dotenv.config();
 
 const queue = new TimeLogsQueue();
@@ -19,42 +20,6 @@ const getMoviesTorrentsLength = async (): Promise<number> => {
     console.error("Error getting radarr torrents");
     console.error(error);
     return -1;
-  }
-};
-
-/**
- * Retrieves all movies from Radarr that need renaming
- * @returns Array of Movies objects
- */
-const getAllMovies = async (): Promise<Movies[]> => {
-  try {
-    let movies: Movies[] = [];
-    const radarr_url = process.env.RADARR_URL;
-    const radarr_key = process.env.RADARR_API_KEY;
-
-    if (!radarr_url || !radarr_key) {
-      queue.onqueue(timeLogs("No key or url supplied for radar"));
-      return movies;
-    }
-
-    await fetch(`${radarr_url}/api/v3/movie`, {
-      method: "GET",
-      headers: {
-        "X-api-key": radarr_key,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        movies = getMoviesList(data);
-      });
-
-    return movies;
-  } catch (error) {
-    console.error("Error getting radarr movies");
-    console.error(error);
-    return [];
   }
 };
 
@@ -80,6 +45,10 @@ const renameRadarrMovies = async () => {
   const movies = await getAllMovies();
 
   for (const movie of movies) {
+    if (countImdbidTags(movie.movieFile?.path || "") > 1) {
+      continue;
+    }
+
     const body = {
       name: "RenameFiles",
       movieId: movie.id,

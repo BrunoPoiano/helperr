@@ -5,13 +5,13 @@
   "scripts": {
     "build": "tsc",
     "check": "node dist/index.js",
-    "checkMovies": "node dist/checkMovies.js",
-    "checkSeries": "node dist/checkSeries.js",
-    "testBot": "node dist/testTelegramBot.js",
-    "renameFiles": "node dist/renameFiles.js",
+    "checkMovies": "node dist/Movies/checkMovies.js",
+    "checkSeries": "node dist/Series/checkSeries.js",
+    "testBot": "node dist/utils/testTelegramBot.js",
+    "renameFiles": "node dist/Movies/renameMovies.js",
     "checkMissing": "node dist/indexMissing.js",
-    "missingSeries": "node dist/missingSeries.js",
-    "missingMovies": "node dist/missingMovies.js"
+    "missingSeries": "node dist/Series/missingSeries.js",
+    "missingMovies": "node dist/Movies/missingMovies.js"
   },
   "exports": "./src/index.js",
   "author": "",

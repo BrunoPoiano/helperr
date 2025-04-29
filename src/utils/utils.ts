@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import type {
   AlternateTitles,
-  MissingSeriesRecordType,
   MissingType,
   Movies,
   Series,
@@ -374,4 +373,9 @@ export const calcHowManyMinutesSinceLastSearch = (
 
   const diffMilliseconds = now.getTime() - lastSearchTime.getTime(); // Difference in milliseconds
   return Math.floor(diffMilliseconds / (1000 * 60));
+};
+
+export const countImdbidTags = (input: string): number => {
+  const matches = input.match(/\[imdbid-/g);
+  return matches ? matches.length : 0;
 };

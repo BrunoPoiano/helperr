@@ -42,7 +42,7 @@ const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
  * Fetches all movies from Radarr API
  * @returns Array of movies
  */
-const getAllMovies = async (): Promise<Movies[]> => {
+export const getAllMovies = async (): Promise<Movies[]> => {
   try {
     let movies: Movies[] = [];
     const radarr_url = process.env.RADARR_URL;

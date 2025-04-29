@@ -4,7 +4,7 @@ import {
   calcHowManyMinutesSinceLastSearch,
   isNumberOrDefault,
 } from "../utils/utils.js";
-import { getSeriesList, getSeriesRecordIds } from "./services.js";
+import { getSeriesList, getRecordIds } from "./services.js";
 dotenv.config();
 
 /**
@@ -38,12 +38,13 @@ const getAlltheMissingEps = async (): Promise<number[]> => {
     );
 
     const data = await response.json();
-    const missingEps = getSeriesRecordIds(data);
+    const missingEps = getRecordIds(data);
 
     for (const ep of missingEps) {
       if (
+        ep.airDate &&
         calcHowManyMinutesSinceLastSearch(ep.lastSearchTime) >
-        minutesSinceLastSearch
+          minutesSinceLastSearch
       ) {
         epsIds.push(ep.id);
       }
@@ -68,6 +69,11 @@ export const missingSeries = async () => {
   }
 
   const missingEpsIds = await getAlltheMissingEps();
+
+  if (missingEpsIds.length === 0) {
+    console.log("No Eps to search");
+    return;
+  }
   const queue = new TimeLogsQueue();
 
   await fetch(`${apiUrl}/api/v3/command`, {
