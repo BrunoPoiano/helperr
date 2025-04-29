@@ -1,9 +1,6 @@
 import dotenv from "dotenv";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
-import {
-  calcHowManyMinutesSinceLastSearch,
-  isNumberOrDefault,
-} from "../utils/utils.js";
+import { calcHowManyMinutesSinceLastSearch, isNumberOrDefault } from "../utils/utils.js";
 import { getRecordIds } from "../Series/services.js";
 dotenv.config();
 
@@ -11,7 +8,7 @@ dotenv.config();
  * Gets all missing movies that need to be searched
  * @returns Array of movie IDs that need searching
  */
-const getAlltheMissingMovies = async (): Promise<number[]> => {
+const getAllTheMissingMovies = async (): Promise<number[]> => {
   const apiKey = process.env.RADARR_API_KEY;
   const apiUrl = process.env.RADARR_URL;
   const minutesSinceLastSearch = isNumberOrDefault(
@@ -74,7 +71,7 @@ export const missingMovies = async (): Promise<void> => {
     return;
   }
 
-  const missingMoviesIds = await getAlltheMissingMovies();
+  const missingMoviesIds = await getAllTheMissingMovies();
 
   if (missingMoviesIds.length === 0) {
     console.log("No Movies to search");

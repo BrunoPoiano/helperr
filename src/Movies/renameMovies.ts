@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
 import { getAllMovies, radarr_cliente } from "./checkMovies.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
-import type { Movies } from "../types.js";
-import { getMoviesList } from "./services.js";
 import { countImdbidTags } from "../utils/utils.js";
 dotenv.config();
 

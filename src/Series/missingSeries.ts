@@ -4,14 +4,14 @@ import {
   calcHowManyMinutesSinceLastSearch,
   isNumberOrDefault,
 } from "../utils/utils.js";
-import { getSeriesList, getRecordIds } from "./services.js";
+import { getRecordIds } from "./services.js";
 dotenv.config();
 
 /**
  * Fetches and returns IDs of missing episodes that haven't been searched recently
  * @returns Promise containing array of episode IDs
  */
-const getAlltheMissingEps = async (): Promise<number[]> => {
+const getAllTheMissingEps = async (): Promise<number[]> => {
   const apiKey = process.env.SONARR_API_KEY;
   const apiUrl = process.env.SONARR_URL;
   const minutesSinceLastSearch = isNumberOrDefault(
@@ -68,7 +68,7 @@ export const missingSeries = async () => {
     return;
   }
 
-  const missingEpsIds = await getAlltheMissingEps();
+  const missingEpsIds = await getAllTheMissingEps();
 
   if (missingEpsIds.length === 0) {
     console.log("No Eps to search");

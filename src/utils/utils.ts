@@ -1,18 +1,12 @@
 import dotenv from "dotenv";
 import type {
   AlternateTitles,
-  MissingType,
   Movies,
   Series,
   Torrents,
 } from "../types.js";
 dotenv.config();
 
-/**
- * Cleans and normalizes a string for comparison purposes
- * @param item The string to prepare for comparison
- * @returns A cleaned string with common media info text removed
- */
 export const prepareComparisonString = (item: string): string => {
   let name = item.toLowerCase();
 
@@ -73,12 +67,6 @@ export const prepareComparisonString = (item: string): string => {
   return name;
 };
 
-/**
- * Inserts a series into an array in sorted order using binary search
- * @param series The array of series
- * @param serie The series to insert
- * @returns The updated array with the series inserted in sorted position
- */
 export const pushBinarySorted = (series: Series[], serie: Series): Series[] => {
   let start = 0;
   let end = series.length - 1;
@@ -96,12 +84,6 @@ export const pushBinarySorted = (series: Series[], serie: Series): Series[] => {
   return series;
 };
 
-/**
- * Searches for media content using binary search and similarity matching
- * @param content Array of media content to search through
- * @param compare The string to search for
- * @returns The matching media item or null if not found
- */
 export const mediaBinarySearch = (
   content: Series[] | Movies[],
   compare: string,
@@ -162,12 +144,6 @@ export const mediaBinarySearch = (
   return null;
 };
 
-/**
- * Calculates the similarity percentage between two strings
- * @param source First string to compare
- * @param target Second string to compare
- * @returns Percentage of similarity (0-100)
- */
 const checkSimilar = (source: string, target: string): number => {
   if (source.length === 0 && target.length === 0) return 100;
 
@@ -179,12 +155,6 @@ const checkSimilar = (source: string, target: string): number => {
   return Math.round(similarity * 100) / 100;
 };
 
-/**
- * Calculates the Levenshtein distance between two strings
- * @param source First string
- * @param target Second string
- * @returns The edit distance between the strings
- */
 const levenshteinDistance = (source: string, target: string): number => {
   const matrix: number[][] = Array.from({ length: source.length + 1 }, () =>
     Array.from({ length: target.length + 1 }, () => 0),
@@ -215,21 +185,11 @@ const levenshteinDistance = (source: string, target: string): number => {
   return matrix[source.length][source.length];
 };
 
-/**
- * Extracts the file extension from a filename
- * @param filename The filename to process
- * @returns The file extension or null if none found
- */
 export const getFileExtension = (filename: string): string | null => {
   const match = filename.match(/\.([^.]*)$/);
   return match ? match[1] : null;
 };
 
-/**
- * Extracts the season information from a torrent name
- * @param torrent_name The name of the torrent
- * @returns The season string or empty string if not found
- */
 export const getSeriesSeason = (torrent_name: string): string => {
   const name = torrent_name.replace(".", " ");
 
@@ -250,21 +210,10 @@ export const getSeriesSeason = (torrent_name: string): string => {
   return "";
 };
 
-/**
- * Checks if a value is a valid object
- * @param obj Value to check
- * @returns True if valid object, false otherwise
- */
 export const isValidObject = (obj: unknown): obj is Record<string, unknown> => {
   return typeof obj === "object" && obj !== null;
 };
 
-/**
- * Converts a value to a number or returns default value
- * @param value The value to convert
- * @param defaultValue Default value to return if conversion fails
- * @returns The number or default value
- */
 export const isNumberOrDefault = (value: unknown, defaultValue = 0): number => {
   if (typeof value === "number") {
     return value;
@@ -272,6 +221,7 @@ export const isNumberOrDefault = (value: unknown, defaultValue = 0): number => {
 
   if (typeof value === "string") {
     const parsed = Number(value);
+    console.log(parsed);
     if (!Number.isNaN(parsed)) {
       return parsed;
     }
@@ -280,12 +230,6 @@ export const isNumberOrDefault = (value: unknown, defaultValue = 0): number => {
   return defaultValue;
 };
 
-/**
- * Converts a value to a string or returns default value
- * @param value The value to convert
- * @param defaultValue Default value to return if conversion fails
- * @returns The string or default value
- */
 export const isString = <T = null>(
   value: unknown,
   defaultValue = "",
@@ -297,11 +241,6 @@ export const isString = <T = null>(
   return defaultValue;
 };
 
-/**
- * Processes an array of data into AlternateTitles objects
- * @param data Array of unknown data to process
- * @returns Array of AlternateTitles objects
- */
 export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
   return data.reduce<AlternateTitles[]>((prev, item) => {
     if (!isValidObject(item) || !("title" in item)) return prev;
@@ -313,11 +252,6 @@ export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
   }, []);
 };
 
-/**
- * Extracts torrent information from data
- * @param data Unknown data to process
- * @returns Array of Torrents objects
- */
 export const returnTorrentList = (data: unknown): Torrents[] => {
   if (
     !data ||
@@ -349,22 +283,12 @@ export const returnTorrentList = (data: unknown): Torrents[] => {
   }, []);
 };
 
-/**
- * Validates response data for missing items
- * @param data Data to check
- * @returns Validated data or empty object
- */
 export const checkMissingResponse = <T = object>(data: unknown): T => {
   return (
     isValidObject(data) && "records" in data && Array(data.records) ? data : {}
   ) as T;
 };
 
-/**
- * Calculates minutes elapsed since a given time
- * @param lastSearch Date string of the last search
- * @returns Number of minutes elapsed
- */
 export const calcHowManyMinutesSinceLastSearch = (
   lastSearch: string,
 ): number => {
@@ -375,7 +299,8 @@ export const calcHowManyMinutesSinceLastSearch = (
   return Math.floor(diffMilliseconds / (1000 * 60));
 };
 
-export const countImdbidTags = (input: string): number => {
+
+export const countImdbidTags = (input: string): number  => {
   const matches = input.match(/\[imdbid-/g);
   return matches ? matches.length : 0;
-};
+}
