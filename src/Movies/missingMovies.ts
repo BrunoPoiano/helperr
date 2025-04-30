@@ -1,37 +1,40 @@
 import dotenv from "dotenv";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
-import { calcHowManyMinutesSinceLastSearch, isNumberOrDefault } from "../utils/utils.js";
+import {
+  calcHowManyMinutesSinceLastSearch,
+  isNumberOrDefault,
+} from "../utils/utils.js";
 import { getRecordIds } from "../Series/services.js";
 dotenv.config();
+
+const queue = new TimeLogsQueue();
+const radarr_url = process.env.RADARR_URL;
+const radarr_key = process.env.RADARR_API_KEY;
+
+if (!radarr_url || !radarr_key) {
+  queue.onqueue(timeLogs("No key or url supplied for radar"));
+  stop();
+}
 
 /**
  * Gets all missing movies that need to be searched
  * @returns Array of movie IDs that need searching
  */
 const getAllTheMissingMovies = async (): Promise<number[]> => {
-  const apiKey = process.env.RADARR_API_KEY;
-  const apiUrl = process.env.RADARR_URL;
   const minutesSinceLastSearch = isNumberOrDefault(
     process.env.SONARR_SEARCH_MISSING_EPS,
     5760,
   );
-  if (!apiUrl || !apiKey) {
-    return [];
-  }
-
-  if (!apiUrl || !apiKey) {
-    return [];
-  }
 
   const moviesIds: number[] = [];
 
   try {
     const response = await fetch(
-      `${apiUrl}/api/v3/wanted/missing?page=1&pageSize=1000&sortDirection=ascending&sortKey=movieMetadata.sortTitle&monitored=true`,
+      `${radarr_url}/api/v3/wanted/missing?page=1&pageSize=1000&sortDirection=ascending&sortKey=movieMetadata.sortTitle&monitored=true`,
       {
         method: "GET",
         headers: {
-          "X-api-key": apiKey,
+          "X-api-key": radarr_key as string,
           "Content-Type": "application/json",
         },
       },
@@ -63,28 +66,18 @@ const getAllTheMissingMovies = async (): Promise<number[]> => {
  * @returns {Promise<void>}
  */
 export const missingMovies = async (): Promise<void> => {
-  const apiKey = process.env.RADARR_API_KEY;
-  const apiUrl = process.env.RADARR_URL;
-
-  // Exit if API credentials are missing
-  if (!apiUrl || !apiKey) {
-    return;
-  }
-
   const missingMoviesIds = await getAllTheMissingMovies();
 
   if (missingMoviesIds.length === 0) {
-    console.log("No Movies to search");
+    queue.onqueue(timeLogs("No Movies to search"));
     return;
   }
 
-  const queue = new TimeLogsQueue();
-
   // Call Radarr API to trigger missing movies search
-  await fetch(`${apiUrl}/api/v3/command`, {
+  await fetch(`${radarr_url}/api/v3/command`, {
     method: "POST",
     headers: {
-      "X-api-key": apiKey,
+      "X-api-key": radarr_key as string,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ movieIds: missingMoviesIds, name: "MoviesSearch" }),

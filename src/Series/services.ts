@@ -1,6 +1,7 @@
-import type {  MissingRecordType, MissingType, Series } from "../types";
+import type { MissingRecordType, MissingType, Series } from "../types";
 import {
   checkMissingResponse,
+  isBoolean,
   isNumberOrDefault,
   isString,
   isValidObject,
@@ -13,6 +14,10 @@ export const getSeriesList = (data: unknown[]): Series[] => {
 
     const record = item as Record<string, unknown>;
 
+    const statistics = isValidObject(record.statistics)
+      ? (record.statistics as Record<string, unknown>)
+      : {};
+
     const series: Series = {
       id: isNumberOrDefault(record.id, 0),
       title: isString(record.title, ""),
@@ -20,6 +25,13 @@ export const getSeriesList = (data: unknown[]): Series[] => {
       alternateTitles: returnAlternateTitle(
         Array.isArray(record.alternateTitles) ? record.alternateTitles : [],
       ),
+      monitored: isBoolean(record.monitored, false),
+      statistics: {
+        episodeFileCount: isNumberOrDefault(
+          statistics.episodeFileCount as number,
+          0,
+        ),
+      },
     };
 
     prev.push(series);
@@ -47,9 +59,7 @@ const recordsArrayFormatter = (data: unknown[]): MissingRecordType[] => {
   }, []);
 };
 
-export const getRecordIds = (
-  data: unknown,
-): MissingRecordType[] => {
+export const getRecordIds = (data: unknown): MissingRecordType[] => {
   const response = checkMissingResponse<MissingType>(data);
 
   const missingSeriesObj: MissingType = {

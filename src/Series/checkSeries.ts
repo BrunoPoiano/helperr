@@ -13,6 +13,14 @@ import { getSeriesList } from "./services.js";
 dotenv.config();
 const queue = new TimeLogsQueue();
 
+const apiKey = process.env.SONARR_API_KEY;
+const apiUrl = process.env.SONARR_URL;
+
+if (!apiKey || !apiUrl) {
+  queue.onqueue(timeLogs("No key or url supplied for sonarr"));
+  stop();
+}
+
 // Initialize the QBittorrent client for Sonarr
 const sonarr_cliente = new QBittorrent({
   baseUrl: process.env.SONARR_QBITTORRENT_URL,
@@ -42,18 +50,11 @@ const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
 const getAllSeries = async (): Promise<Series[]> => {
   try {
     let series: Series[] = [];
-    const apiKey = process.env.SONARR_API_KEY;
-    const apiUrl = process.env.SONARR_URL;
-
-    if (!apiKey || !apiUrl) {
-      queue.onqueue(timeLogs("No key or url supplied for sonarr"));
-      return series;
-    }
 
     await fetch(`${apiUrl}/api/v3/series`, {
       method: "GET",
       headers: {
-        "X-api-key": apiKey,
+        "X-api-key": apiKey as string,
       },
     })
       .then((response) => {
@@ -98,7 +99,7 @@ export const seriesCompareAndChangeLocation = async () => {
       continue;
     }
 
-    await updateTorrent(serie, torrent);
+    await updateTorrent(serie as Series, torrent);
   }
 };
 

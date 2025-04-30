@@ -14,6 +14,14 @@ dotenv.config();
 
 const queue = new TimeLogsQueue();
 
+const radarr_url = process.env.RADARR_URL;
+const radarr_key = process.env.RADARR_API_KEY;
+
+if (!radarr_url || !radarr_key) {
+  queue.onqueue(timeLogs("No key or url supplied for radar"));
+  stop();
+}
+
 /**
  * QBittorrent client for Radarr
  */
@@ -45,18 +53,11 @@ const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
 export const getAllMovies = async (): Promise<Movies[]> => {
   try {
     let movies: Movies[] = [];
-    const radarr_url = process.env.RADARR_URL;
-    const radarr_key = process.env.RADARR_API_KEY;
-
-    if (!radarr_url || !radarr_key) {
-      queue.onqueue(timeLogs("No key or url supplied for radar"));
-      return movies;
-    }
 
     await fetch(`${radarr_url}/api/v3/movie`, {
       method: "GET",
       headers: {
-        "X-api-key": radarr_key,
+        "X-api-key": radarr_key as string,
       },
     })
       .then((response) => {
@@ -101,7 +102,7 @@ export const moviesCompareAndChangeLocation = async () => {
       );
       continue;
     }
-    updateTorrent(movie, torrent);
+    updateTorrent(movie as Movies, torrent);
   }
 };
 

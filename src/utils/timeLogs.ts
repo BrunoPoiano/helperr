@@ -38,6 +38,8 @@ export function timeLogs<T>(log: T, sendToBot?: string): () => Promise<void> {
       hour12: false,
     }).format(now);
 
+    console.log(formattedDate, " | ", log);
+
     if (sendToBot) {
       await telegramBotChat(sendToBot);
     }

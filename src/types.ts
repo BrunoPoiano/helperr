@@ -27,6 +27,10 @@ export type Movies = {
     relativePath: string;
   };
   alternateTitles: AlternateTitles[];
+  monitored?: boolean;
+  statistics?: {
+    movieFileCount?: number;
+  };
 };
 
 export type Series = {
@@ -34,6 +38,10 @@ export type Series = {
   title: string;
   path: string;
   alternateTitles: AlternateTitles[];
+  monitored?: boolean;
+  statistics?: {
+    episodeFileCount?: number;
+  };
 };
 
 export type Torrents = {

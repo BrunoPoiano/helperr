@@ -1,5 +1,6 @@
 import type { Movies } from "../types.js";
 import {
+  isBoolean,
   isNumberOrDefault,
   isString,
   isValidObject,
@@ -17,6 +18,9 @@ export const getMoviesList = (data: unknown[]): Movies[] => {
     if (!isValidObject(item) || !("id" in item)) return prev;
 
     const record = item as Record<string, unknown>;
+    const recordStatistics = isValidObject(record.statistics)
+      ? record.statistics
+      : {};
 
     // Create a Movies object with safe type conversion
     const movies: Movies = {
@@ -31,6 +35,10 @@ export const getMoviesList = (data: unknown[]): Movies[] => {
       alternateTitles: returnAlternateTitle(
         Array.isArray(record.alternateTitles) ? record.alternateTitles : [],
       ),
+      monitored: isBoolean(record.monitored),
+      statistics: {
+        movieFileCount: isNumberOrDefault(recordStatistics.movieFileCount, 0),
+      },
     };
 
     prev.push(movies);

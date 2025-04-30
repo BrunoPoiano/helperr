@@ -1,10 +1,5 @@
 import dotenv from "dotenv";
-import type {
-  AlternateTitles,
-  Movies,
-  Series,
-  Torrents,
-} from "../types.js";
+import type { AlternateTitles, Movies, Series, Torrents } from "../types.js";
 dotenv.config();
 
 export const prepareComparisonString = (item: string): string => {
@@ -221,7 +216,6 @@ export const isNumberOrDefault = (value: unknown, defaultValue = 0): number => {
 
   if (typeof value === "string") {
     const parsed = Number(value);
-    console.log(parsed);
     if (!Number.isNaN(parsed)) {
       return parsed;
     }
@@ -237,6 +231,21 @@ export const isString = <T = null>(
   if (typeof value === "string" && value.length > 0) return value.trim();
 
   if (typeof value === "number") return value.toString();
+
+  return defaultValue;
+};
+
+export const isBoolean = <T = null>(
+  value: unknown,
+  defaultValue = false,
+): boolean | T => {
+  if (typeof value === "boolean") return value;
+
+  if (typeof value === "string") {
+    const parsed = value.toLowerCase();
+    if (parsed === "true") return true;
+    if (parsed === "false") return false;
+  }
 
   return defaultValue;
 };
@@ -299,8 +308,7 @@ export const calcHowManyMinutesSinceLastSearch = (
   return Math.floor(diffMilliseconds / (1000 * 60));
 };
 
-
-export const countImdbidTags = (input: string): number  => {
+export const countImdbidTags = (input: string): number => {
   const matches = input.match(/\[imdbid-/g);
   return matches ? matches.length : 0;
-}
+};

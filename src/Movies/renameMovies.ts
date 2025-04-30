@@ -5,6 +5,13 @@ import { countImdbidTags } from "../utils/utils.js";
 dotenv.config();
 
 const queue = new TimeLogsQueue();
+const radarr_url = process.env.RADARR_URL;
+const radarr_key = process.env.RADARR_API_KEY;
+
+if (!radarr_url || !radarr_key) {
+  queue.onqueue(timeLogs("No key or url supplied for radar"));
+  stop();
+}
 
 /**
  * Gets the count of torrents currently in Radarr
@@ -25,15 +32,7 @@ const getMoviesTorrentsLength = async (): Promise<number> => {
  * Renames movie files in Radarr to match the correct format
  * Only runs when no torrents are active
  */
-const renameRadarrMovies = async () => {
-  const radarr_url = process.env.RADARR_URL;
-  const radarr_key = process.env.RADARR_API_KEY;
-
-  if (!radarr_url || !radarr_key) {
-    queue.onqueue(timeLogs("No key or url supplied for radar"));
-    return;
-  }
-
+export const renameRadarrMovies = async () => {
   const torrentLength: number = await getMoviesTorrentsLength();
   if (torrentLength > 0) {
     queue.onqueue(timeLogs("Can't update title with torrent active"));
@@ -41,39 +40,41 @@ const renameRadarrMovies = async () => {
   }
 
   const movies = await getAllMovies();
-
-  for (const movie of movies) {
+  const moviesIds = movies.reduce<number[]>((prev, movie) => {
+    if (!movie.monitored) return prev;
     if (countImdbidTags(movie.movieFile?.path || "") > 1) {
-      continue;
+      return prev;
+    }
+    if (movie.statistics?.movieFileCount === 0) {
+      return prev;
     }
 
-    const body = {
-      name: "RenameFiles",
-      movieId: movie.id,
-      files: [movie.movieFileId],
-    };
+    prev.push(movie.id);
 
-    await fetch(`${radarr_url}/api/v3/command`, {
-      method: "POST",
-      headers: {
-        "X-api-key": radarr_key,
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      body: JSON.stringify(body),
+    return prev;
+  }, []);
+
+  const body = {
+    name: "RenameMovie",
+    movieIds: moviesIds,
+  };
+
+  await fetch(`${radarr_url}/api/v3/command`, {
+    method: "POST",
+    headers: {
+      "X-api-key": radarr_key as string,
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: JSON.stringify(body),
+  })
+    .then(() => {
+      queue.onqueue(timeLogs("Running rename movies", "Running rename movies"));
     })
-      .then(() => {
-        queue.onqueue(
-          timeLogs({
-            "movie id": movie.id,
-            "movie title": movie.title,
-            "movie path": movie.movieFile?.path,
-          }),
-        );
-      })
-      .catch((err) => {
-        console.log("error", err);
-      });
-  }
+    .catch((err) => {
+      console.log("error", err);
+    });
 };
 
-renameRadarrMovies();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  renameRadarrMovies();
+}
