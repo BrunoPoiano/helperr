@@ -18,10 +18,10 @@ RUN npm install && npm run build
 # Run check on series and movies every 10 minutes between midnight-5:59AM and 9AM-11:59PM
 RUN echo "*/10 0-5,9-23 * * * cd /usr/src/app && npm run check >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 
-# Run rename movies task daily at 7:00AM
+# Run rename files task daily at 7:00AM
 RUN echo "0 7 * * * cd /usr/src/app && npm run renameFiles >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
 
-# Run search for missing series episodes and movies daily at 8:00AM
+# Run search for missing series and movies daily at 8:00AM
 RUN echo "0 8 * * * cd /usr/src/app && npm run checkMissing >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
 
 # Create empty log file for cron output
