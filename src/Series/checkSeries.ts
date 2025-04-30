@@ -47,7 +47,7 @@ const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
  * Retrieves all series from Sonarr API
  * @returns Array of series
  */
-const getAllSeries = async (): Promise<Series[]> => {
+export const getAllSeries = async (): Promise<Series[]> => {
   try {
     let series: Series[] = [];
 

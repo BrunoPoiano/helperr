@@ -2,6 +2,7 @@ dotenv.config();
 
 import type { Series } from "../types.js";
 import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
+import { getAllSeries } from "./checkSeries.js";
 import { getSeriesList } from "./services.js";
 import dotenv from "dotenv";
 
@@ -16,34 +17,9 @@ if (!apiKey || !apiUrl) {
 }
 
 /**
- * Retrieves all series from Sonarr API
- * @returns Array of series
+ * Renames series episodes in Sonarr
+ * Filters for monitored series with episode files and sends rename command
  */
-const getAllSeries = async (): Promise<Series[]> => {
-  try {
-    let series: Series[] = [];
-
-    await fetch(`${apiUrl}/api/v3/series`, {
-      method: "GET",
-      headers: {
-        "X-api-key": apiKey as string,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        series = getSeriesList(data);
-      });
-
-    return series;
-  } catch (error) {
-    console.error("Error getting sonarr series");
-    console.error(error);
-    return [];
-  }
-};
-
 export const renameSeriesEps = async () => {
   const series = await getAllSeries();
 
