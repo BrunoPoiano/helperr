@@ -23,7 +23,7 @@ if (!apiKey || !apiUrl) {
  */
 const getAllTheMissingEps = async (): Promise<number[]> => {
   const minutesSinceLastSearch = isNumberOrDefault(
-    process.env.SONARR_SEARCH_MISSING_EPS,
+    process.env.MISSING_FILES_SEARCH_INTERVAL,
     5760,
   );
 
