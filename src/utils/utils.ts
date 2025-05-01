@@ -262,34 +262,30 @@ export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
 };
 
 export const returnTorrentList = (data: unknown): Torrents[] => {
-  if (
-    !data ||
-    typeof data !== "object" ||
-    !("raw" in data) ||
-    !Array.isArray(data.raw)
-  )
+  if (!isValidObject(data) || !("raw" in data) || !Array.isArray(data.raw))
     return [];
 
-  return data.raw.reduce<Torrents[]>((prev, item) => {
+  const torrents = data.raw.reduce<Torrents[]>((prev, item) => {
     if (!isValidObject(item)) return prev;
 
     const record = item as Record<string, unknown>;
 
     if (
-      record.category === "tv-sonarr" &&
-      record.save_path === "/downloads/tv-sonarr"
+      (record.category === "tv-sonarr" || record.category === "radarr") &&
+      (record.save_path === "/downloads/tv-sonarr" ||
+        record.save_path === "/downloads/radarr")
     ) {
-      return prev;
+      prev.push({
+        hash: isString(record.hash),
+        name: isString(record.name),
+        content_path: isString(record.content_path),
+      });
     }
-
-    prev.push({
-      hash: isString(record.hash),
-      name: isString(record.name),
-      content_path: isString(record.content_path),
-    });
 
     return prev;
   }, []);
+
+  return torrents;
 };
 
 export const checkMissingResponse = <T = object>(data: unknown): T => {

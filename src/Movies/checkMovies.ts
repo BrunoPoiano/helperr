@@ -112,84 +112,130 @@ export const moviesCompareAndChangeLocation = async () => {
  * @param torrent Torrent object
  */
 const updateTorrent = async (movie: Movies, torrent: Torrents) => {
-  const movie_split = movie.path.split("/");
-  const movie_name = movie_split[movie_split.length - 1];
-  let new_path = "";
-
+  // Log that we're starting an update
   queue.onqueue(timeLogs(`Movie | Running update on ${torrent.name}`));
 
-  const torrent_contents = await radarr_cliente.torrentFiles(torrent.hash);
+  // Extract movie name from the movie path
+  const movie_split = movie.path.split("/");
+  const movie_name = movie_split[movie_split.length - 1];
 
-  if (torrent_contents.length > 1) {
-    //rename folder
-    const old_path = torrent.content_path.split("/");
-    await radarr_cliente
-      .renameFolder(torrent.hash, old_path[old_path.length - 1], movie_name)
-      .catch((err) => {
-        console.error("Movies | error renaming folder | ", movie.title);
-        console.error(err);
-      });
+  // Define base and full paths for the download
+  const base_path = `${process.env.RADARR_DOWNLOAD_PATH}`;
+  const full_path = `${process.env.RADARR_DOWNLOAD_PATH}${movie_name}`;
 
-    //rename files inside folder
-    for (const file of torrent_contents) {
-      const extention = getFileExtension(file.name);
-      const old_file_path = file.name.split("/");
+  try {
+    // Fetch the contents of the torrent
+    const torrent_contents = await radarr_cliente.torrentFiles(torrent.hash);
 
-      if (
-        extention &&
-        ["mp4", "mkv", "avi", "mov", "webm", "nfo"].includes(extention)
-      ) {
+    // Handle torrents with multiple files (folders)
+    if (torrent_contents.length > 1) {
+      // Get the current folder name from the torrent path
+      const old_path = torrent.content_path.split("/");
+      const old_folder_name = old_path[old_path.length - 1];
+
+      // Rename the folder if it doesn't match the movie name
+      if (old_folder_name !== movie_name) {
         await radarr_cliente
-          .renameFile(
-            torrent.hash,
-            `${movie_name}/${old_file_path[1]}`,
-            `${movie_name}/${movie_name}.${extention}`,
-          )
+          .renameFolder(torrent.hash, old_folder_name, movie_name)
           .catch((err) => {
-            console.error("Movies | error renaming files | ", movie.title);
+            console.error("Movies | error renaming folder | ", movie.title);
+            console.error(err);
+          });
+      }
+
+      // Iterate through files in the folder and rename them
+      for (const file of torrent_contents) {
+        const extention = getFileExtension(file.name);
+        const old_file_path = file.name.split("/");
+        const new_file_name = `${movie_name}.${extention}`;
+
+        // Only rename media files and NFO files if they don't already have the correct name
+        if (
+          extention &&
+          ["mp4", "mkv", "avi", "mov", "webm", "nfo"].includes(extention) &&
+          old_file_path[1] !== new_file_name
+        ) {
+          try {
+            await radarr_cliente.renameFile(
+              torrent.hash,
+              `${movie_name}/${old_file_path[1]}`,
+              `${movie_name}/${new_file_name}`,
+            );
+          } catch (err) {
+            console.error(
+              `Movies | error renaming file ${old_file_path[1]} | ${movie.title}`,
+            );
+            console.error(err);
+          }
+        }
+      }
+
+      // Move the torrent to the base path if it's not already there
+      if (torrent.content_path !== base_path) {
+        await radarr_cliente
+          .setTorrentLocation(torrent.hash, base_path)
+          .catch((err) => {
+            console.error(
+              "Movies | error changing the location | ",
+              movie.title,
+            );
+            console.error(err);
+          });
+      }
+    } else {
+      // Handle single file torrents
+      const old_path = torrent.content_path.split("/");
+      const old_file_name = old_path[old_path.length - 1];
+
+      // Rename the file if it doesn't match the movie name
+      if (old_file_name !== movie_name) {
+        try {
+          await radarr_cliente.renameFile(
+            torrent.hash,
+            old_file_name,
+            movie_name,
+          );
+        } catch (err) {
+          timeLogs(
+            `Movies | error renaming file ${old_file_name} | ${movie.title}`,
+          );
+          console.error(err);
+        }
+      }
+
+      // Move the torrent to the full path if it's not already there
+      if (torrent.content_path !== full_path) {
+        await radarr_cliente
+          .setTorrentLocation(torrent.hash, full_path)
+          .catch((err) => {
+            timeLogs(`Movies | error changing the location | ${movie.title}`);
             console.error(err);
           });
       }
     }
 
-    //change the location
-    new_path = `${process.env.RADARR_DOWNLOAD_PATH}`;
-    await radarr_cliente
-      .setTorrentLocation(torrent.hash, new_path)
-      .catch((err) => {
-        console.error("Movies | error changing the location | ", movie.title);
-        console.error(err);
-      });
-  } else {
-    const old_path = torrent.content_path.split("/");
-
-    //rename the file
-    await radarr_cliente
-      .renameFile(torrent.hash, old_path[old_path.length - 1], movie_name)
-      .catch((err) => {
-        console.error("Movies | error renaming file | ", movie.title);
-        console.error(err);
-      });
-
-    //change the location and add the folder
-    new_path = `${process.env.RADARR_DOWNLOAD_PATH}${movie_name}`;
-    radarr_cliente.setTorrentLocation(torrent.hash, new_path).catch((err) => {
-      console.error("Movies | error changing the location | ", movie.title);
-      console.error(err);
-    });
+    // Log successful update with details
+    queue.onqueue(
+      timeLogs(
+        {
+          "torrent name": torrent.name,
+          "movie title": movie.title,
+          "movie radarr path": movie.path,
+          "new torrent location": full_path,
+        },
+        `Movies | ${movie.title} moved to "${full_path}"`,
+      ),
+    );
+  } catch (error) {
+    // Log unexpected errors during processing
+    queue.onqueue(
+      timeLogs(
+        `Unexpected error processing Movie ${torrent.name}`,
+        `Unexpected error processing Movie ${torrent.name}`,
+      ),
+    );
+    console.error(error);
   }
-
-  queue.onqueue(
-    timeLogs(
-      {
-        "torrent name": torrent.name,
-        "movie title": movie.title,
-        "movie radarr path": movie.path,
-        "new torrent location": new_path,
-      },
-      `${movie.title} moved to "${new_path}"`,
-    ),
-  );
 };
 
 if (import.meta.url === `file://${process.argv[1]}`) {
