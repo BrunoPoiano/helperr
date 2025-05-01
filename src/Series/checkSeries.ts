@@ -22,7 +22,7 @@ if (!apiKey || !apiUrl) {
 }
 
 // Initialize the QBittorrent client for Sonarr
-const sonarr_cliente = new QBittorrent({
+export const sonarr_cliente = new QBittorrent({
   baseUrl: process.env.SONARR_QBITTORRENT_URL,
   username: process.env.SONARR_QBITTORRENT_USERNAME,
   password: process.env.SONARR_QBITTORRENT_PASSWORD,
