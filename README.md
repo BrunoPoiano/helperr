@@ -29,49 +29,57 @@ The script performs the following automated tasks:
 You can find the Docker image here: [qbit-relocator image](https://hub.docker.com/r/brunopoiano/qbit-relocater)
 
 ### Using Docker Image
-In the same folder create a .env and a docker-compose.yaml
-
+command line
 ```bash
-#.env
-########## RADARR
-
-RADARR_QBITTORRENT_URL="http://192.168.3.53:8080"
-RADARR_QBITTORRENT_USERNAME=
-RADARR_QBITTORRENT_PASSWORD=
-
-RADARR_URL="http://192.168.3.53:7878"
-RADARR_API_KEY=
-RADARR_DOWNLOAD_PATH="/downloads/movies/"
-
-########## SONARR
-
-SONARR_QBITTORRENT_URL="http://192.168.3.29:8080"
-SONARR_QBITTORRENT_USERNAME=
-SONARR_QBITTORRENT_PASSWORD=
-
-SONARR_URL="http://192.168.3.29:8989"
-SONARR_API_KEY=
-SONARR_DOWNLOAD_PATH="/downloads/shows/"
-
-############### OPTIONAL
-
-# How often to search again for missing files (in minutes)
-# Default is 2880 (48 hours)
-MISSING_FILES_SEARCH_INTERVAL=2880
-
-######### TELEGRAM BOT
-TELEGRAM_BOT_TOKEN=
-TELEGRAM_CHAT_ID=
+docker run -d \
+  --name qbit-relocater \
+  --restart unless-stopped \
+  -e TZ="America/Sao_Paulo" \
+  -e RADARR_QBITTORRENT_URL="http://localhost:8080" \
+  -e RADARR_QBITTORRENT_USERNAME="" \
+  -e RADARR_QBITTORRENT_PASSWORD="" \
+  -e RADARR_URL="http://localhost:7878" \
+  -e RADARR_API_KEY="" \
+  -e RADARR_DOWNLOAD_PATH="/downloads/movies/" \
+  -e SONARR_QBITTORRENT_URL="http://localhost:8080" \
+  -e SONARR_QBITTORRENT_USERNAME="" \
+  -e SONARR_QBITTORRENT_PASSWORD="" \
+  -e SONARR_URL="http://localhost:8989" \
+  -e SONARR_API_KEY="" \
+  -e SONARR_DOWNLOAD_PATH="/downloads/shows/" \
+  -e MISSING_FILES_SEARCH_INTERVAL=2880 \
+  -e TELEGRAM_BOT_TOKEN="" \
+  -e TELEGRAM_CHAT_ID="" \
+  -e DISCORD_URL="" \
+  -e DISCORD_USERNAME="Qbit-Renamer" \
+  docker.io/brunopoiano/qbit-relocater
 ```
 
+or docker-compose.yaml
 ```yaml
-#docker-compose.yaml
 services:
   qbit-relocater:
     image: docker.io/brunopoiano/qbit-relocater
     environment:
-      TZ: America/Sao_Paulo    # Set your timezone here
-    env_file: .env
+      TZ: America/Sao_Paulo
+      RADARR_QBITTORRENT_URL: "http://localhost:8080"
+      RADARR_QBITTORRENT_USERNAME: ""
+      RADARR_QBITTORRENT_PASSWORD: ""
+      RADARR_URL: "http://localhost:7878"
+      RADARR_API_KEY: ""
+      RADARR_DOWNLOAD_PATH: "/downloads/movies/"
+      SONARR_QBITTORRENT_URL: "http://localhost:8080"
+      SONARR_QBITTORRENT_USERNAME: ""
+      SONARR_QBITTORRENT_PASSWORD: ""
+      SONARR_URL: "http://localhost:8989"
+      SONARR_API_KEY: ""
+      SONARR_DOWNLOAD_PATH: "/downloads/shows/"
+      MISSING_FILES_SEARCH_INTERVAL: 2880
+      #optional:
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
+      DISCORD_URL: ""
+      DISCORD_USERNAME: "Qbit-Renamer"
     restart: unless-stopped
     container_name: qbit-relocater
 ```
@@ -87,13 +95,7 @@ docker compose up -d
 git clone git@github.com:BrunoPoiano/qbit-relocater.git
 cd qbit-relocater
 ```
-
-Create and configure your .env file:
-```bash
-cp .env.exemple .env
-# Edit .env with your configuration
-```
-
+Edit environment variables with your configuration
 Build and run the container:
 ```bash
 docker build -t qbit-relocater .
@@ -111,8 +113,8 @@ docker exec qbit-relocater npm run checkMovies
 # Scan and process TV series
 docker exec qbit-relocater npm run checkSeries
 
-# Test Telegram bot connection
-docker exec qbit-relocater npm run testBot
+# Test Notifications
+docker exec qbit-relocater npm run testNotification
 
 # Search for missing movies
 docker exec qbit-relocater npm run missingMovies

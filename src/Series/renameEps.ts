@@ -1,7 +1,7 @@
 dotenv.config();
 
 import type { Series } from "../types.js";
-import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
+import { timeLogs, TimeLogsQueue } from "../Logs/logs.js";
 import { getAllSeries, sonarr_cliente } from "./checkSeries.js";
 import { getSeriesList } from "./services.js";
 import dotenv from "dotenv";

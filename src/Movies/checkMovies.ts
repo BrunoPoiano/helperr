@@ -6,7 +6,7 @@ import {
   prepareComparisonString,
   returnTorrentList,
 } from "../utils/utils.js";
-import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
+import { timeLogs, TimeLogsQueue } from "../Logs/logs.js";
 import type { Movies, Torrents } from "../types.js";
 import { getMoviesList } from "./services.js";
 

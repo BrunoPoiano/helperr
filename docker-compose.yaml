@@ -3,6 +3,22 @@ services:
     build: .
     environment:
       TZ: America/Sao_Paulo
-    env_file: .env
+      RADARR_QBITTORRENT_URL: "http://localhost:8080"
+      RADARR_QBITTORRENT_USERNAME: ""
+      RADARR_QBITTORRENT_PASSWORD: ""
+      RADARR_URL: "http://localhost:7878"
+      RADARR_API_KEY: ""
+      RADARR_DOWNLOAD_PATH: "/downloads/movies/"
+      SONARR_QBITTORRENT_URL: "http://localhost:8080"
+      SONARR_QBITTORRENT_USERNAME: ""
+      SONARR_QBITTORRENT_PASSWORD: ""
+      SONARR_URL: "http://localhost:8989"
+      SONARR_API_KEY: ""
+      SONARR_DOWNLOAD_PATH: "/downloads/shows/"
+      MISSING_FILES_SEARCH_INTERVAL: 2880
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
+      DISCORD_URL: ""
+      DISCORD_USERNAME: "Qbit-Renamer"
     restart: unless-stopped
     container_name: qbit-relocater

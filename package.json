@@ -9,7 +9,7 @@
     "renameFiles": "node dist/indexRename.js",
     "checkMovies": "node dist/Movies/checkMovies.js",
     "checkSeries": "node dist/Series/checkSeries.js",
-    "testBot": "node dist/utils/testTelegramBot.js",
+    "testNotification": "node dist/utils/testNotification.js",
     "renameMovies": "node dist/Movies/renameMovies.js",
     "renameSeries": "node dist/Series/renameEps.js",
     "missingSeries": "node dist/Series/missingSeries.js",

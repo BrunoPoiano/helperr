@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { timeLogs, TimeLogsQueue } from "../utils/timeLogs.js";
+import { timeLogs, TimeLogsQueue } from "../Logs/logs.js";
 import {
   calcHowManyMinutesSinceLastSearch,
   isNumberOrDefault,
