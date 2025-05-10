@@ -1,6 +1,6 @@
 {
   "name": "qbit-relocater",
-  "version": "1.5.8",
+  "version": "1.6.8",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
