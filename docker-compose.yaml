@@ -1,5 +1,5 @@
 services:
-  qbit-relocater:
+  helperr:
     build: .
     environment:
       TZ: America/Sao_Paulo
@@ -19,6 +19,7 @@ services:
       TELEGRAM_BOT_TOKEN: ""
       TELEGRAM_CHAT_ID: ""
       DISCORD_URL: ""
-      DISCORD_USERNAME: "Qbit-Renamer"
+      DISCORD_USERNAME: "Helperr"
+      UNDESIRED_EXTENTIONS: "[]"
     restart: unless-stopped
     container_name: qbit-relocater

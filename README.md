@@ -1,13 +1,20 @@
-# Qbit-relocater
+# Helperr
 
-Qbit-Relocater is a script that seamlessly integrates with Sonarr, Radarr, and qBittorrent to relocate torrents to the correct folders.
+Helperr is a service that provides several improvements to Sonarr, Radarr, and qBittorrent integration for media management.
 
-It ensures that files and folders are renamed and moved without breaking qBittorrent's links, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This allows for a cleaner, more efficient media management workflow.
+It integrates with Sonarr, Radarr, and qBittorrent to **relocate torrents** to the correct folders. This ensures that files and folders are renamed and moved *without breaking qBittorrent's links*, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This results in a cleaner, more efficient media management workflow.
+
+Helperr also includes features to:
+*   Check for missing content
+*   Automatically rename files
+*   Analyze torrents to prevent the download of unwanted extensions
 
 ## Automatic Actions
 
 The script performs the following automated tasks:
-- Every 10 minutes: Runs a check for moving files
+- Every 10 minutes:
+  - Check for new files to relocate
+  - Verify files for unwanted extensions
 - Once a day: Renames movie and series files
 - Once a day: Checks for missing movies/series episodes
 
@@ -26,13 +33,13 @@ The script performs the following automated tasks:
 - In Radarr/Sonarr qBittorrent settings: Set `Content Layout` as Original
 
 ## Deployment
-You can find the Docker image here: [qbit-relocator image](https://hub.docker.com/r/brunopoiano/qbit-relocater)
+You can find the Docker image here: [helperr image](https://hub.docker.com/r/brunopoiano/helperr)
 
 ### Using Docker Image
 command line
 ```bash
 docker run -d \
-  --name qbit-relocater \
+  --name helperr \
   --restart unless-stopped \
   -e TZ="America/Sao_Paulo" \
   -e RADARR_QBITTORRENT_URL="http://localhost:8080" \
@@ -52,14 +59,15 @@ docker run -d \
   -e TELEGRAM_CHAT_ID="" \
   -e DISCORD_URL="" \
   -e DISCORD_USERNAME="Qbit-Renamer" \
-  docker.io/brunopoiano/qbit-relocater
+  -e UNDESIRED_EXTENTIONS="[]" \
+  docker.io/brunopoiano/helperr
 ```
 
 or docker-compose.yaml
 ```yaml
 services:
-  qbit-relocater:
-    image: docker.io/brunopoiano/qbit-relocater
+  helperr:
+    image: docker.io/brunopoiano/helperr
     environment:
       TZ: America/Sao_Paulo
       RADARR_QBITTORRENT_URL: "http://localhost:8080"
@@ -79,9 +87,9 @@ services:
       TELEGRAM_BOT_TOKEN: ""
       TELEGRAM_CHAT_ID: ""
       DISCORD_URL: ""
-      DISCORD_USERNAME: "Qbit-Renamer"
+      DISCORD_USERNAME: "helperr"
     restart: unless-stopped
-    container_name: qbit-relocater
+    container_name: helperr
 ```
 
 Start the container:
@@ -92,13 +100,13 @@ docker compose up -d
 ### Building from Source Code
 
 ```bash
-git clone git@github.com:BrunoPoiano/qbit-relocater.git
-cd qbit-relocater
+git clone git@github.com:BrunoPoiano/helperr.git
+cd helperr
 ```
 Edit environment variables with your configuration
 Build and run the container:
 ```bash
-docker build -t qbit-relocater .
+docker build -t helperr .
 docker compose up -d
 ```
 
@@ -108,32 +116,32 @@ The following commands can be used to manually trigger specific operations:
 
 ```bash
 # Scan and process movies
-docker exec qbit-relocater npm run checkMovies
+docker exec helperr npm run checkMovies
 
 # Scan and process TV series
-docker exec qbit-relocater npm run checkSeries
+docker exec helperr npm run checkSeries
 
 # Test Notifications
-docker exec qbit-relocater npm run testNotification
+docker exec helperr npm run testNotification
 
 # Search for missing movies
-docker exec qbit-relocater npm run missingMovies
+docker exec helperr npm run missingMovies
 
 # Search for missing TV episodes
-docker exec qbit-relocater npm run missingSeries
+docker exec helperr npm run missingSeries
 
 # Rename movie files
-docker exec qbit-relocater npm run renameMovies
+docker exec helperr npm run renameMovies
 
 # Rename TV series episodes
-docker exec qbit-relocater npm run renameSeries
+docker exec helperr npm run renameSeries
 
 # Run full check for both movies and series
-docker exec qbit-relocater npm run check
+docker exec helperr npm run check
 
 # Run check for all missing content
-docker exec qbit-relocater npm run checkMissing
+docker exec helperr npm run checkMissing
 
 # Run rename operation for all content
-docker exec qbit-relocater npm run renameFiles
+docker exec helperr npm run renameFiles
 ```
