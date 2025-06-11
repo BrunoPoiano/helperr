@@ -290,7 +290,7 @@ export const undesiredExtentionsParser = (): string[] => {
   const regex = /^\[\s*(?:[^,\[\]]+(?:\s*,\s*[^,\[\]]+)*)?\s*\]$/;
   if (regex.test(envUndesiredExtentions)) {
     const extArray = envUndesiredExtentions
-      .replace(" ", "")
+      .replace(/\s/g, "")
       .replace("[", "")
       .replace("]", "")
       .split(",");
