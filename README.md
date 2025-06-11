@@ -88,6 +88,7 @@ services:
       TELEGRAM_CHAT_ID: ""
       DISCORD_URL: ""
       DISCORD_USERNAME: "helperr"
+      UNDESIRED_EXTENTIONS: "[]"
     restart: unless-stopped
     container_name: helperr
 ```
