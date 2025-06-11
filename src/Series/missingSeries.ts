@@ -14,7 +14,7 @@ const apiUrl = process.env.SONARR_URL;
 
 if (!apiKey || !apiUrl) {
   queue.onqueue(timeLogs("No key or url supplied for sonarr"));
-  stop();
+  process.exit(1);
 }
 
 /**

@@ -4,28 +4,39 @@ import {
   getSeriesSeason,
   mediaBinarySearch,
   prepareComparisonString,
-  returnTorrentList,
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../Logs/logs.js";
 import type { Series, Torrents } from "../types.js";
 import { getSeriesList } from "./services.js";
+import {
+  removeTorrentsUndesiredExtentions,
+  returnTorrentList,
+} from "../utils/torrent.js";
 
 dotenv.config();
 const queue = new TimeLogsQueue();
 
 const apiKey = process.env.SONARR_API_KEY;
 const apiUrl = process.env.SONARR_URL;
+const baseUrl = process.env.SONARR_QBITTORRENT_URL;
+const username = process.env.SONARR_QBITTORRENT_USERNAME;
+const password = process.env.SONARR_QBITTORRENT_PASSWORD;
 
 if (!apiKey || !apiUrl) {
-  queue.onqueue(timeLogs("No key or url supplied for sonarr"));
-  stop();
+  console.log("No key or url supplied for sonarr");
+  process.exit(1);
+}
+
+if (!baseUrl || !username || !password) {
+  console.log("No baseUrl or username or password supplied for torrent sonarr");
+  process.exit(1);
 }
 
 // Initialize the QBittorrent client for Sonarr
 export const sonarr_cliente = new QBittorrent({
-  baseUrl: process.env.SONARR_QBITTORRENT_URL,
-  username: process.env.SONARR_QBITTORRENT_USERNAME,
-  password: process.env.SONARR_QBITTORRENT_PASSWORD,
+  baseUrl,
+  username,
+  password,
 });
 
 /**
@@ -35,7 +46,12 @@ export const sonarr_cliente = new QBittorrent({
 const getAllSeriesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await sonarr_cliente.getAllData();
-    return returnTorrentList(all_torrents);
+    const filteredTorrents = await removeTorrentsUndesiredExtentions(
+      sonarr_cliente,
+      returnTorrentList(all_torrents),
+    );
+
+    return filteredTorrents;
   } catch (error) {
     console.error("Error getting sonarr torrents");
     console.error(error);

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import type { AlternateTitles, Movies, Series, Torrents } from "../types.js";
+import type { AlternateTitles, Movies, Series } from "../types.js";
 dotenv.config();
 
 export const prepareComparisonString = (item: string): string => {
@@ -261,33 +261,6 @@ export const returnAlternateTitle = (data: unknown[]): AlternateTitles[] => {
   }, []);
 };
 
-export const returnTorrentList = (data: unknown): Torrents[] => {
-  if (!isValidObject(data) || !("raw" in data) || !Array.isArray(data.raw))
-    return [];
-
-  const torrents = data.raw.reduce<Torrents[]>((prev, item) => {
-    if (!isValidObject(item)) return prev;
-
-    const record = item as Record<string, unknown>;
-
-    if (
-      (record.category === "tv-sonarr" || record.category === "radarr") &&
-      (record.save_path === "/downloads/tv-sonarr" ||
-        record.save_path === "/downloads/radarr")
-    ) {
-      prev.push({
-        hash: isString(record.hash),
-        name: isString(record.name),
-        content_path: isString(record.content_path),
-      });
-    }
-
-    return prev;
-  }, []);
-
-  return torrents;
-};
-
 export const checkMissingResponse = <T = object>(data: unknown): T => {
   return (
     isValidObject(data) && "records" in data && Array(data.records) ? data : {}
@@ -307,4 +280,23 @@ export const calcHowManyMinutesSinceLastSearch = (
 export const countImdbidTags = (input: string): number => {
   const matches = input.match(/\[imdbid-/g);
   return matches ? matches.length : 0;
+};
+
+export const undesiredExtentionsParser = (): string[] => {
+  const envUndesiredExtentions = process.env.UNDESIRED_EXTENTIONS;
+
+  if (!envUndesiredExtentions) return [];
+
+  const regex = /^\[\s*(?:[^,\[\]]+(?:\s*,\s*[^,\[\]]+)*)?\s*\]$/;
+  if (regex.test(envUndesiredExtentions)) {
+    const extArray = envUndesiredExtentions
+      .replace(" ", "")
+      .replace("[", "")
+      .replace("]", "")
+      .split(",");
+
+    return extArray;
+  }
+
+  return [];
 };

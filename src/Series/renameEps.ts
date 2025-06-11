@@ -13,7 +13,7 @@ const apiUrl = process.env.SONARR_URL;
 
 if (!apiKey || !apiUrl) {
   queue.onqueue(timeLogs("No key or url supplied for sonarr"));
-  stop();
+  process.exit(1);
 }
 /**
  * Gets the total count of active torrents in Sonarr.

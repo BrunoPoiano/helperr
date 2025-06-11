@@ -13,7 +13,7 @@ const radarr_key = process.env.RADARR_API_KEY;
 
 if (!radarr_url || !radarr_key) {
   queue.onqueue(timeLogs("No key or url supplied for radar"));
-  stop();
+  process.exit(1);
 }
 
 /**

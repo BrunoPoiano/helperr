@@ -4,11 +4,14 @@ import {
   getFileExtension,
   mediaBinarySearch,
   prepareComparisonString,
-  returnTorrentList,
 } from "../utils/utils.js";
 import { timeLogs, TimeLogsQueue } from "../Logs/logs.js";
 import type { Movies, Torrents } from "../types.js";
 import { getMoviesList } from "./services.js";
+import {
+  removeTorrentsUndesiredExtentions,
+  returnTorrentList,
+} from "../utils/torrent.js";
 
 dotenv.config();
 
@@ -16,21 +19,28 @@ const queue = new TimeLogsQueue();
 
 const radarr_url = process.env.RADARR_URL;
 const radarr_key = process.env.RADARR_API_KEY;
+const baseUrl = process.env.RADARR_QBITTORRENT_URL;
+const username = process.env.RADARR_QBITTORRENT_USERNAME;
+const password = process.env.RADARR_QBITTORRENT_PASSWORD;
 
 if (!radarr_url || !radarr_key) {
   queue.onqueue(timeLogs("No key or url supplied for radar"));
-  stop();
+  process.exit(1);
+}
+
+if (!baseUrl || !username || !password) {
+  console.log("No baseUrl or username or password supplied for torrent radarr");
+  process.exit(1);
 }
 
 /**
  * QBittorrent client for Radarr
  */
 export const radarr_cliente = new QBittorrent({
-  baseUrl: process.env.RADARR_QBITTORRENT_URL,
-  username: process.env.RADARR_QBITTORRENT_USERNAME,
-  password: process.env.RADARR_QBITTORRENT_PASSWORD,
+  baseUrl,
+  username,
+  password,
 });
-
 /**
  * Fetches all movie torrents from qBittorrent
  * @returns Array of torrents
@@ -38,7 +48,11 @@ export const radarr_cliente = new QBittorrent({
 const getAllMoviesTorrents = async (): Promise<Torrents[]> => {
   try {
     const all_torrents = await radarr_cliente.getAllData();
-    return returnTorrentList(all_torrents);
+    const filteredTorrents = await removeTorrentsUndesiredExtentions(
+      radarr_cliente,
+      returnTorrentList(all_torrents),
+    );
+    return filteredTorrents;
   } catch (error) {
     console.error("Error getting radarr torrents");
     console.error(error);
