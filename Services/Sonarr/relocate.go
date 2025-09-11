@@ -10,7 +10,7 @@ import (
 
 func Relocate() {
 
-	logs.TimeLogs("serie", false, "running series check", true)
+	logs.TimeLogs("serie", false, "running series check", false)
 
 	torrents, error := qbit.List()
 	if error != nil {

@@ -9,7 +9,7 @@ import (
 )
 
 func Relocate() {
-	logs.TimeLogs("movie", false, "Running Relocate Movies Check", true)
+	logs.TimeLogs("movie", false, "Running Relocate Movies Check", false)
 
 	torrents, error := qbit.List()
 	if error != nil {

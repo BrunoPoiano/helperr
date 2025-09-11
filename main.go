@@ -5,23 +5,57 @@ import (
 	radarr "helperr/Services/Radarr"
 	sonarr "helperr/Services/Sonarr"
 	"os"
+	"sync"
 )
 
 func main() {
 	args := os.Args[1:]
 
+	var wg sync.WaitGroup
 	switch args[0] {
 	case "missing":
-		sonarr.Missing()
-		radarr.Missing()
+		wg.Add(2)
+		go func() {
+			sonarr.Missing()
+			defer wg.Done()
+		}()
+		go func() {
+			radarr.Missing()
+			defer wg.Done()
+		}()
 		break
 	case "rename":
-		sonarr.Rename()
-		radarr.Rename()
+		wg.Add(2)
+		go func() {
+			sonarr.Rename()
+			defer wg.Done()
+		}()
+		go func() {
+			radarr.Rename()
+			defer wg.Done()
+		}()
 		break
 	case "relocate":
-		sonarr.Relocate()
-		radarr.Relocate()
+		wg.Add(2)
+		go func() {
+			sonarr.Relocate()
+			defer wg.Wait()
+		}()
+		go func() {
+			radarr.Relocate()
+			defer wg.Wait()
+		}()
+		break
+	case "check-notifications":
+		wg.Add(2)
+		go func() {
+			logs.CheckDiscord()
+			defer wg.Wait()
+		}()
+		go func() {
+			logs.CheckTelegram()
+			defer wg.Wait()
+		}()
 		break
 
 	case "missing-series":
@@ -45,17 +79,13 @@ func main() {
 		radarr.Relocate()
 		break
 
-	case "check-notifications":
-		logs.CheckDiscord()
-		logs.CheckTelegram()
-		break
 	case "check-telegram":
 		logs.CheckTelegram()
 		break
 	case "check-discord":
 		logs.CheckDiscord()
 		break
-
 	}
 
+	wg.Wait()
 }
