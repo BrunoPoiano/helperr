@@ -22,4 +22,4 @@ services:
       DISCORD_USERNAME: "Helperr"
       UNDESIRED_EXTENTIONS: "[]"
     restart: unless-stopped
-    container_name: qbit-relocater
+    container_name: helperr
