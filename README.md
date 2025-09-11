@@ -9,6 +9,7 @@ Helperr also includes features to:
 - Check for missing content
 - Automatically rename files
 - Analyze torrents to prevent the download of unwanted extensions
+- Notify users via Telegram and Discord
 
 ## Automatic Actions
 
@@ -17,31 +18,34 @@ The script performs the following automated tasks:
 - Every 10 minutes:
   - Check for new files to relocate
   - Verify files for unwanted extensions
-- Once a day: Renames movie and series files
-- Once a day: Checks for missing movies/series episodes
+- Once a day:
+  - Rename movie and series files
+  - Check for missing movies/series episodes
 
-## Before Deployment
+## Prerequisites
 
-- Both Radarr and Sonarr should be at least **version 3+**
-- In qBittorrent:
-  - The `tv-sonarr` category should be set for Sonarr
-  - The `radarr` category should be set for Radarr
-- In Radarr/Sonarr:
-  - `Completed Download Handling` must be `disabled`
+Before deploying Helperr, ensure the following:
 
-_Recommended settings_
+- **Sonarr and Radarr**: Version 3+ is required.
+- **qBittorrent**:
+  - The `tv-sonarr` category should be set for Sonarr.
+  - The `radarr` category should be set for Radarr.
+- **Sonarr/Radarr**:
+  - `Completed Download Handling` must be disabled.
 
-- In qBittorrent: Enable `Keep incomplete torrents in`
-- In Sonarr/Radarr: Enable `Rename Episodes`
-- In Radarr/Sonarr qBittorrent settings: Set `Content Layout` as Original
+### Recommended Settings
+
+- In qBittorrent: Enable `Keep incomplete torrents in`.
+- In Sonarr/Radarr: Enable `Rename Episodes`.
+- In Sonarr/Radarr qBittorrent settings: Set `Content Layout` to `Original`.
 
 ## Deployment
 
-You can find the Docker image here: [helperr image](https://hub.docker.com/r/brunopoiano/helperr)
+You can find the Docker image here: [helperr image](https://hub.docker.com/r/brunopoiano/helperr).
 
 ### Using Docker Image
 
-command line
+#### Command Line
 
 ```bash
 docker run -d \
@@ -69,7 +73,7 @@ docker run -d \
   docker.io/brunopoiano/helperr
 ```
 
-or docker-compose.yaml
+#### Docker Compose
 
 ```yaml
 services:
@@ -90,7 +94,7 @@ services:
       SONARR_API_KEY: ""
       SONARR_DOWNLOAD_PATH: "/downloads/shows/"
       MISSING_FILES_SEARCH_INTERVAL: 2880
-      #optional:
+      # Optional:
       TELEGRAM_BOT_TOKEN: ""
       TELEGRAM_CHAT_ID: ""
       DISCORD_URL: ""
@@ -113,8 +117,7 @@ git clone git@github.com:BrunoPoiano/helperr.git
 cd helperr
 ```
 
-Edit environment variables with your configuration
-Build and run the container:
+Edit environment variables with your configuration. Build and run the container:
 
 ```bash
 docker build -t helperr .
@@ -126,33 +129,39 @@ docker compose up -d
 The following commands can be used to manually trigger specific operations:
 
 ```bash
-# Scan and process movies
-docker exec helperr npm run checkMovies
+# Check for missing movies and TV series
+docker exec helperr ./helperr missing
 
-# Scan and process TV series
-docker exec helperr npm run checkSeries
+# Rename all movie and TV series files
+docker exec helperr ./helperr rename
 
-# Test Notifications
-docker exec helperr npm run testNotification
+# Relocate all movie and TV series files
+docker exec helperr ./helperr relocate
 
-# Search for missing movies
-docker exec helperr npm run missingMovies
+# Check notifications for both Telegram and Discord
+docker exec helperr ./helperr check-notifications
 
-# Search for missing TV episodes
-docker exec helperr npm run missingSeries
+# Check for missing TV series episodes
+docker exec helperr ./helperr missing-series
 
-# Rename movie files
-docker exec helperr npm run renameMovies
+# Check for missing movies
+docker exec helperr ./helperr missing-movies
 
 # Rename TV series episodes
-docker exec helperr npm run renameSeries
+docker exec helperr ./helperr rename-series
 
-# Run full check for both movies and series
-docker exec helperr npm run check
+# Rename movie files
+docker exec helperr ./helperr rename-movies
 
-# Run check for all missing content
-docker exec helperr npm run checkMissing
+# Relocate TV series episodes
+docker exec helperr ./helperr relocate-series
 
-# Run rename operation for all content
-docker exec helperr npm run renameFiles
+# Relocate movie files
+docker exec helperr ./helperr relocate-movies
+
+# Test Telegram notifications
+docker exec helperr ./helperr check-telegram
+
+# Test Discord notifications
+docker exec helperr ./helperr check-discord
 ```

@@ -39,22 +39,22 @@ func main() {
 		wg.Add(2)
 		go func() {
 			sonarr.Relocate()
-			defer wg.Wait()
+			defer wg.Done()
 		}()
 		go func() {
 			radarr.Relocate()
-			defer wg.Wait()
+			defer wg.Done()
 		}()
 		break
 	case "check-notifications":
 		wg.Add(2)
 		go func() {
 			logs.CheckDiscord()
-			defer wg.Wait()
+			defer wg.Done()
 		}()
 		go func() {
 			logs.CheckTelegram()
-			defer wg.Wait()
+			defer wg.Done()
 		}()
 		break
 
