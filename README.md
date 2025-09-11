@@ -2,16 +2,18 @@
 
 Helperr is a service that provides several improvements to Sonarr, Radarr, and qBittorrent integration for media management.
 
-It integrates with Sonarr, Radarr, and qBittorrent to **relocate torrents** to the correct folders. This ensures that files and folders are renamed and moved *without breaking qBittorrent's links*, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This results in a cleaner, more efficient media management workflow.
+It integrates with Sonarr, Radarr, and qBittorrent to **relocate torrents** to the correct folders. This ensures that files and folders are renamed and moved _without breaking qBittorrent's links_, eliminating the need for hardlinks or relying on Sonarr/Radarr to move or copy files. This results in a cleaner, more efficient media management workflow.
 
 Helperr also includes features to:
-*   Check for missing content
-*   Automatically rename files
-*   Analyze torrents to prevent the download of unwanted extensions
+
+- Check for missing content
+- Automatically rename files
+- Analyze torrents to prevent the download of unwanted extensions
 
 ## Automatic Actions
 
 The script performs the following automated tasks:
+
 - Every 10 minutes:
   - Check for new files to relocate
   - Verify files for unwanted extensions
@@ -22,21 +24,25 @@ The script performs the following automated tasks:
 
 - Both Radarr and Sonarr should be at least **version 3+**
 - In qBittorrent:
-    - The `tv-sonarr` category should be set for Sonarr
-    - The `radarr` category should be set for Radarr
+  - The `tv-sonarr` category should be set for Sonarr
+  - The `radarr` category should be set for Radarr
 - In Radarr/Sonarr:
-    - `Completed Download Handling` must be `disabled`
+  - `Completed Download Handling` must be `disabled`
 
-*Recommended settings*
+_Recommended settings_
+
 - In qBittorrent: Enable `Keep incomplete torrents in`
 - In Sonarr/Radarr: Enable `Rename Episodes`
 - In Radarr/Sonarr qBittorrent settings: Set `Content Layout` as Original
 
 ## Deployment
+
 You can find the Docker image here: [helperr image](https://hub.docker.com/r/brunopoiano/helperr)
 
 ### Using Docker Image
+
 command line
+
 ```bash
 docker run -d \
   --name helperr \
@@ -59,11 +65,12 @@ docker run -d \
   -e TELEGRAM_CHAT_ID="" \
   -e DISCORD_URL="" \
   -e DISCORD_USERNAME="Qbit-Renamer" \
-  -e UNDESIRED_EXTENTIONS="[]" \
+  -e UNDESIRED_EXTENTIONS="[.exe,.rar]" \
   docker.io/brunopoiano/helperr
 ```
 
 or docker-compose.yaml
+
 ```yaml
 services:
   helperr:
@@ -88,12 +95,13 @@ services:
       TELEGRAM_CHAT_ID: ""
       DISCORD_URL: ""
       DISCORD_USERNAME: "helperr"
-      UNDESIRED_EXTENTIONS: "[]"
+      UNDESIRED_EXTENTIONS: "[.exe,.rar]"
     restart: unless-stopped
     container_name: helperr
 ```
 
 Start the container:
+
 ```bash
 docker compose up -d
 ```
@@ -104,8 +112,10 @@ docker compose up -d
 git clone git@github.com:BrunoPoiano/helperr.git
 cd helperr
 ```
+
 Edit environment variables with your configuration
 Build and run the container:
+
 ```bash
 docker build -t helperr .
 docker compose up -d
