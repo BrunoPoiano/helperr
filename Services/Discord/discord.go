@@ -8,6 +8,15 @@ import (
 	"net/http"
 )
 
+// discordRequest makes a request to the Discord API.
+// Parameters:
+//   - method: HTTP method (e.g., "GET", "POST").
+//   - url: The Discord API endpoint URL.
+//   - body: The request body as an io.Reader.
+//
+// Returns:
+//   - []byte: The response body as a byte slice.
+//   - error: An error if the request fails.
 func discordRequest(method, url string, body io.Reader) ([]byte, error) {
 	discordCliente := &http.Client{}
 
@@ -31,6 +40,12 @@ func discordRequest(method, url string, body io.Reader) ([]byte, error) {
 	return responseBody, nil
 }
 
+// DiscordChannel sends a message to a Discord channel.
+// Parameters:
+//   - log: The message to send to the Discord channel.
+//
+// Returns:
+//   - None
 func DiscordChannel(log string) {
 	discordUrl := config.Env.DiscordUrl
 	discordUsername := config.Env.DiscordUsername

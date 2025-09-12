@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+// Relocate checks for new series files in the torrent client and updates their location.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Relocate() {
 
 	logs.TimeLogs("serie", false, "running series check", false)
@@ -40,6 +46,13 @@ func Relocate() {
 	}
 }
 
+// updateTorrent updates the location of a torrent based on the series and torrent information.
+// Parameters:
+//   - serie: The series information.
+//   - torrent: The torrent information.
+//
+// Returns:
+//   - None
 func updateTorrent(serie *types.Serie, torrent types.Torrent) {
 	// Log the start of the update process
 	log := fmt.Sprintf("Running update on: %s", torrent.Name)

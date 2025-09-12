@@ -242,6 +242,13 @@ func (qbit *QbitWrapper) RenameFolder(hash, oldPath, newPath string) error {
 	return err
 }
 
+// DeleteTorrents deletes multiple torrents from qBittorrent.
+// Parameters:
+//   - hashes: A slice of torrent hashes to delete.
+//   - deleteFiles: A boolean indicating whether to delete the associated files.
+//
+// Returns:
+//   - error: An error if the request fails.
 func (qbit *QbitWrapper) DeleteTorrents(hashes []string, deleteFiles bool) error {
 	data := url.Values{}
 	data.Set("hashes", strings.Join(hashes, "|"))
@@ -251,6 +258,13 @@ func (qbit *QbitWrapper) DeleteTorrents(hashes []string, deleteFiles bool) error
 	return err
 }
 
+// DeleteTorrent deletes a torrent from qBittorrent.
+// Parameters:
+//   - hash: The hash of the torrent to delete.
+//   - deleteFiles: A boolean indicating whether to delete the associated files.
+//
+// Returns:
+//   - error: An error if the request fails.
 func (qbit *QbitWrapper) DeleteTorrent(hash string, deleteFiles bool) error {
 	data := url.Values{}
 	data.Set("hashes", hash)
@@ -260,6 +274,12 @@ func (qbit *QbitWrapper) DeleteTorrent(hash string, deleteFiles bool) error {
 	return err
 }
 
+// RemoveUndesiredExtentions filters out torrents with undesired file extensions.
+// Parameters:
+//   - torrents: A slice of Torrent structs.
+//
+// Returns:
+//   - []types.Torrent: A slice of filtered Torrent structs.
 func (qbit *QbitWrapper) RemoveUndesiredExtentions(
 	torrents []types.Torrent,
 ) []types.Torrent {

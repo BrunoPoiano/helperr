@@ -9,6 +9,15 @@ import (
 	"net/http"
 )
 
+// telegramRequest sends a request to the Telegram Bot API.
+// Parameters:
+//   - method: HTTP method (GET, POST, etc.).
+//   - url: API endpoint URL.
+//   - body: Request body (io.Reader).
+//
+// Returns:
+//   - []byte: Response body as byte slice.
+//   - error: Any error encountered during the request.
 func telegramRequest(method, url string, body io.Reader) ([]byte, error) {
 	telCliente := &http.Client{}
 
@@ -32,6 +41,12 @@ func telegramRequest(method, url string, body io.Reader) ([]byte, error) {
 	return responseBody, nil
 }
 
+// TelegramBotChat sends a message to a Telegram bot.
+// Parameters:
+//   - log: The message to send.
+//
+// Returns:
+//   - None
 func TelegramBotChat(log string) {
 	telBotTocken := config.Env.TelegramBotToken
 	telChatId := config.Env.TelegramChatId

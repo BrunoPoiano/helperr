@@ -2,6 +2,12 @@ package sonarr
 
 import logs "helperr/Services/Logs"
 
+// Rename triggers a rename series command in Sonarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Rename() {
 	logs.TimeLogs("serie", false, "Running rename series eps", true)
 	torrents, error := qbit.List()

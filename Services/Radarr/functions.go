@@ -14,18 +14,45 @@ type radarrWrapper struct {
 	types.RadarrClient
 }
 
+// GetTitle retrieves the title of a movie.
+// Parameters:
+//   - m: The movie object.
+//
+// Returns:
+//   - The title of the movie.
 func GetTitle(m types.Movie) string {
 	return m.Title
 }
 
+// GetAlternateTitles retrieves the alternate titles of a movie.
+// Parameters:
+//   - m: The movie object.
+//
+// Returns:
+//   - A slice of alternate titles for the movie.
 func GetAlternateTitles(m types.Movie) []types.AlternateTitle {
 	return m.AlternateTitles
 }
 
+// RadarrClient creates a new Radarr client wrapper.
+// Parameters:
+//   - values: The Radarr client configuration values.
+//
+// Returns:
+//   - A pointer to the Radarr client wrapper.
 func RadarrClient(values types.RadarrClient) *radarrWrapper {
 	return &radarrWrapper{values}
 }
 
+// radarrRequest makes a request to the Radarr API.
+// Parameters:
+//   - method: The HTTP method to use (e.g., "GET", "POST").
+//   - url: The API endpoint URL.
+//   - body: The request body (if any).
+//
+// Returns:
+//   - The response body as a byte slice.
+//   - An error if the request fails.
 func (radarr *radarrWrapper) radarrRequest(method, url string, body io.Reader) ([]byte, error) {
 
 	request, error := http.NewRequest(method, radarr.BaseURL+url, body)
@@ -48,6 +75,13 @@ func (radarr *radarrWrapper) radarrRequest(method, url string, body io.Reader) (
 	return responseBody, nil
 }
 
+// List retrieves a list of movies from Radarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - A slice of Movie objects.
+//   - An error if the request fails.
 func (radarr *radarrWrapper) List() ([]types.Movie, error) {
 
 	var movies []types.Movie
@@ -64,6 +98,13 @@ func (radarr *radarrWrapper) List() ([]types.Movie, error) {
 	return movies, nil
 }
 
+// RadarrCommand sends a command to Radarr.
+// Parameters:
+//   - command: The command to execute.
+//   - movesIds: A slice of movie IDs to apply the command to.
+//
+// Returns:
+//   - An error if the request fails.
 func (radarr *radarrWrapper) RadarrCommand(command string, movesIds []int) error {
 
 	data := map[string]interface{}{
@@ -80,6 +121,13 @@ func (radarr *radarrWrapper) RadarrCommand(command string, movesIds []int) error
 	return err
 }
 
+// MissingMovies retrieves a list of missing movie IDs from Radarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - A slice of movie IDs that are missing.
+//   - An error if the request fails.
 func (radarr *radarrWrapper) MissingMovies() ([]int, error) {
 	minutesSinceLastSearch := config.Env.MissingFilesSearchInternal | 5760
 

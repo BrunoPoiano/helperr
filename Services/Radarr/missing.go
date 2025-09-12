@@ -2,6 +2,12 @@ package radarr
 
 import logs "helperr/Services/Logs"
 
+// Missing checks for missing movies in Radarr and initiates a search.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Missing() {
 	logs.TimeLogs("movie", false, "Running Missing Movies Check", true)
 

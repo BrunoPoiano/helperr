@@ -2,6 +2,12 @@ package sonarr
 
 import logs "helperr/Services/Logs"
 
+// Missing checks for missing episodes and triggers a search in Sonarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Missing() {
 	logs.TimeLogs("serie", false, "Running Missing Eps Check", true)
 

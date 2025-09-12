@@ -8,6 +8,13 @@ import (
 	"strings"
 )
 
+// Relocate checks for movies to relocate and calls updateTorrent for each.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Relocate() {
 	logs.TimeLogs("movie", false, "Running Relocate Movies Check", false)
 
@@ -39,6 +46,14 @@ func Relocate() {
 	}
 }
 
+// updateTorrent renames and relocates a torrent based on movie information.
+//
+// Parameters:
+//   - movie: The movie object.
+//   - torrent: The torrent object.
+//
+// Returns:
+//   - None
 func updateTorrent(movie *types.Movie, torrent types.Torrent) {
 	logs.TimeLogs("movie", false, fmt.Sprintf(`Running update on %s`, movie.Title), true)
 
@@ -120,9 +135,9 @@ func updateTorrent(movie *types.Movie, torrent types.Torrent) {
 	}
 	logs.TimeLogs("movie", false, fmt.Sprintf(`
 		torrent name: %s
-    movie title: %s
-    radarr location: %s
-    torrent location: %s`, torrent.Name, movie.Title, movie.Path, fullPath),
+				movie title: %s
+				radarr location: %s
+				torrent location: %s`, torrent.Name, movie.Title, movie.Path, fullPath),
 		true,
 	)
 }

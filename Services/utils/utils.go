@@ -27,6 +27,13 @@ var VideoExtensions = map[string]bool{
 	"nfo":  true,
 }
 
+// PrepareComparisonString prepares a string for comparison by removing irrelevant parts like season/episode numbers, years, and common release group tags.
+//
+// Parameters:
+//   - item: The input string to prepare.
+//
+// Returns:
+//   - The prepared string, lowercased and stripped of irrelevant information.
 func PrepareComparisonString(item string) string {
 	var name = strings.ToLower(item)
 
@@ -86,6 +93,14 @@ func PrepareComparisonString(item string) string {
 	return name
 }
 
+// MediaBinarySearch performs a binary search on a slice of Media items.
+//
+// Parameters:
+//   - content: The slice of Media items to search.
+//   - compare: The string to compare against the Media titles.
+//
+// Returns:
+//   - A pointer to the found Media item, or nil if not found. Also returns an error if not found.
 func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
 
 	start := 0
@@ -149,11 +164,25 @@ func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
 	return nil, fmt.Errorf("Movie Not Found")
 }
 
+// HasImdbidTags checks if the input string has IMDB ID tags.
+//
+// Parameters:
+//   - input: The input string to check.
+//
+// Returns:
+//   - True if the input string has IMDB ID tags, false otherwise.
 func HasImdbidTags(input string) bool {
 	count := regexp.MustCompile(`imdbid-`).FindAllStringIndex(input, -1)
 	return len(count) == 2
 }
 
+// MinutesSinceLastSearch calculates the number of minutes since the last search.
+//
+// Parameters:
+//   - lastSearch: The timestamp of the last search in RFC3339 format.
+//
+// Returns:
+//   - The number of minutes since the last search, or an error if the timestamp is invalid.
 func MinutesSinceLastSearch(
 	lastSearch string,
 ) (int, error) {
@@ -167,6 +196,13 @@ func MinutesSinceLastSearch(
 	return int(diff.Minutes()), nil
 }
 
+// SeriesSeason extracts the season information from a torrent name.
+//
+// Parameters:
+//   - torrentName: The name of the torrent.
+//
+// Returns:
+//   - The season information, or an empty string if not found.
 func SeriesSeason(torrentName string) string {
 	name := strings.ReplaceAll(torrentName, ".", " ")
 	season := regexp.MustCompile(`[Ss][0-9]{2}`).FindString(name)
@@ -176,6 +212,13 @@ func SeriesSeason(torrentName string) string {
 	return season
 }
 
+// ParseUndesiredExtentions parses a string of undesired extensions into a map.
+//
+// Parameters:
+//   - raw: The raw string of extensions, comma separated and enclosed in square brackets.
+//
+// Returns:
+//   - A map of undesired extensions, where the key is the extension and the value is true.
 func ParseUndesiredExtentions(raw string) map[string]bool {
 
 	values := make(map[string]bool)
@@ -189,6 +232,14 @@ func ParseUndesiredExtentions(raw string) map[string]bool {
 	return values
 }
 
+// ReturnEnvVariable returns the value of an environment variable with a default value.
+//
+// Parameters:
+//   - key: The name of the environment variable.
+//   - default_value: The default value to return if the environment variable is not set.
+//
+// Returns:
+//   - The value of the environment variable, or the default value if not set.
 func ReturnEnvVariable[T interface{}](key string, default_value T) T {
 	envKey := os.Getenv(key)
 	if envKey == "" {

@@ -5,6 +5,13 @@ import (
 	"helperr/Services/utils"
 )
 
+// Rename triggers a rename command in Radarr for movies that meet certain criteria.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func Rename() {
 	logs.TimeLogs("movie", false, "Running rename Movies", true)
 	torrents, error := qbit.List()

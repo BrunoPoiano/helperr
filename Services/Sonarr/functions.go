@@ -12,10 +12,25 @@ import (
 
 type sonarrWrapper struct{ types.SonarrClient }
 
+// SonarrClient creates a new Sonarr client wrapper.
+// Parameters:
+//   - values: Sonarr client configuration values.
+//
+// Returns:
+//   - *sonarrWrapper: A pointer to the new Sonarr client wrapper.
 func SonarrClient(values types.SonarrClient) *sonarrWrapper {
 	return &sonarrWrapper{values}
 }
 
+// sonarrRequest makes a request to the Sonarr API.
+// Parameters:
+//   - method: HTTP method (GET, POST, etc.).
+//   - url: API endpoint URL.
+//   - body: Request body (io.Reader).
+//
+// Returns:
+//   - []byte: Response body as a byte slice.
+//   - error: An error if the request fails.
 func (sonarr *sonarrWrapper) sonarrRequest(method, url string, body io.Reader) ([]byte, error) {
 
 	request, error := http.NewRequest(method, sonarr.BaseURL+url, body)
@@ -38,6 +53,13 @@ func (sonarr *sonarrWrapper) sonarrRequest(method, url string, body io.Reader) (
 	return responseBody, nil
 }
 
+// List retrieves a list of series from Sonarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - []types.Serie: A slice of Serie structs.
+//   - error: An error if the request or unmarshaling fails.
 func (sonarr *sonarrWrapper) List() ([]types.Serie, error) {
 
 	var series []types.Serie
@@ -54,6 +76,14 @@ func (sonarr *sonarrWrapper) List() ([]types.Serie, error) {
 	return series, nil
 }
 
+// SonarrCommand sends a command to Sonarr.
+// Parameters:
+//   - command: The command to execute.
+//   - typeCommand: The type of command (e.g., "seriesIds").
+//   - seriesIds: A slice of series IDs to apply the command to.
+//
+// Returns:
+//   - error: An error if the request fails.
 func (sonarr *sonarrWrapper) SonarrCommand(command, typeCommand string, seriesIds []int) error {
 
 	data := map[string]interface{}{
@@ -70,6 +100,13 @@ func (sonarr *sonarrWrapper) SonarrCommand(command, typeCommand string, seriesId
 	return err
 }
 
+// MissingEpsList retrieves a list of missing episode IDs from Sonarr.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - []int: A slice of missing episode IDs.
+//   - error: An error if the request or unmarshaling fails.
 func (sonarr *sonarrWrapper) MissingEpsList() ([]int, error) {
 	minutesSinceLastSearch := config.Env.MissingFilesSearchInternal | 5760
 

@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+// TimeLogs logs the event with the current time, type, and error status.
+// Parameters:
+//   - logType: The type of log (e.g., "movie", "serie", "torrent").
+//   - error: A boolean indicating if the log is an error.
+//   - log: The log message.
+//   - sendToUser: A boolean indicating whether to send the log to Telegram and Discord.
+//
+// Returns:
+//   - None
 func TimeLogs(logType types.LogType, error bool, log string, sendToUser bool) {
 
 	if !logType.IsValid() {
@@ -34,10 +43,22 @@ func TimeLogs(logType types.LogType, error bool, log string, sendToUser bool) {
 	}
 }
 
+// CheckTelegram sends a test notification to Telegram.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func CheckTelegram() {
 	telegram.TelegramBotChat("Testing Notification")
 }
 
+// CheckDiscord sends a test notification to Discord.
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func CheckDiscord() {
 	discord.DiscordChannel("Testing Notification")
 }
