@@ -12,7 +12,7 @@ func Missing() {
 	}
 
 	if len(epsIds) == 0 {
-		logs.TimeLogs("serie", false, "No Missing Eps to Search", false)
+		logs.TimeLogs("serie", false, "No Missing Eps to Search", true)
 		return
 	}
 

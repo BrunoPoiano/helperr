@@ -36,6 +36,6 @@ func Rename() {
 	error = sonarrClient.SonarrCommand("RenameSeries", "seriesIds", seriesIds)
 	if error != nil {
 		logs.TimeLogs("serie", true, "Running rename series eps", false)
+		return
 	}
-
 }

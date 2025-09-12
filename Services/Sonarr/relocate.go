@@ -15,14 +15,17 @@ func Relocate() {
 	torrents, error := qbit.List()
 	if error != nil {
 		logs.TimeLogs("serie", true, "Error listing Torrents", false)
+		return
 	}
 	if len(torrents) == 0 {
 		logs.TimeLogs("serie", false, "No new series files to update", false)
+		return
 	}
 
 	series, error := sonarrClient.List()
 	if error != nil {
 		logs.TimeLogs("serie", true, "getting series list", false)
+		return
 	}
 
 	for _, torrent := range torrents {

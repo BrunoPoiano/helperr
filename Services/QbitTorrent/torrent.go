@@ -75,7 +75,7 @@ func (qbit *QbitWrapper) Login(username, password string) *QbitWrapper {
 
 	request, error := http.NewRequest("POST", qbit.BaseURL+"/api/v2/auth/login", strings.NewReader(data.Encode()))
 	if error != nil {
-		panic(error.Error())
+		return qbit
 	}
 
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -83,7 +83,7 @@ func (qbit *QbitWrapper) Login(username, password string) *QbitWrapper {
 
 	response, error := qbit.Client.Do(request)
 	if error != nil {
-		panic(error.Error())
+		return qbit
 	}
 
 	qbit.Cookie = response.Cookies()[0]
@@ -102,7 +102,9 @@ func (qbit *QbitWrapper) List() ([]types.Torrent, error) {
 	var data []types.Torrent
 
 	body, err := qbit.qbitRequest("GET", "/api/v2/torrents/info", nil)
-
+	if err != nil {
+		return data, err
+	}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return data, err

@@ -14,6 +14,7 @@ func Relocate() {
 	torrents, error := qbit.List()
 	if error != nil {
 		logs.TimeLogs("movie", true, fmt.Sprintf("getting torrent list | %s", error.Error()), false)
+		return
 	}
 
 	if len(torrents) == 0 {
@@ -24,7 +25,9 @@ func Relocate() {
 	movies, error := radarrClient.List()
 	if error != nil {
 		logs.TimeLogs("movie", true, fmt.Sprintf("Movies List | %s", error.Error()), false)
+		return
 	}
+
 	for _, torrent := range torrents {
 		torrentName := utils.PrepareComparisonString(torrent.Name)
 		movie, error := utils.MediaBinarySearch(movies, torrentName)
@@ -62,6 +65,7 @@ func updateTorrent(movie *types.Movie, torrent types.Torrent) {
 			error := qbit.RenameFolder(torrent.Hash, oldFolderName, movieName)
 			if error != nil {
 				logs.TimeLogs("movie", true, fmt.Sprintf("Renaming Folder | %s", movie.Title), true)
+				return
 			}
 		}
 

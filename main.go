@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	logs "helperr/Services/Logs"
 	radarr "helperr/Services/Radarr"
 	sonarr "helperr/Services/Sonarr"
@@ -8,7 +9,10 @@ import (
 	"sync"
 )
 
+var Version = "unknown"
+
 func main() {
+
 	args := os.Args[1:]
 
 	var wg sync.WaitGroup
@@ -85,7 +89,12 @@ func main() {
 	case "check-discord":
 		logs.CheckDiscord()
 		break
+
+	case "--version":
+		fmt.Printf("Version: %s", Version)
+		break
 	}
 
 	wg.Wait()
+
 }

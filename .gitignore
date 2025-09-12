@@ -133,3 +133,4 @@ dist
 go.mod
 helperr
 main
+start.sh
