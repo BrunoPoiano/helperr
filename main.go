@@ -91,7 +91,7 @@ func main() {
 		break
 
 	case "--version":
-		fmt.Printf("Version: %s", Version)
+		fmt.Printf("Version: %s \n", Version)
 		break
 	}
 

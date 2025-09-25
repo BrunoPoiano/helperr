@@ -38,8 +38,8 @@ func Relocate() {
 		torrentName := utils.PrepareComparisonString(torrent.Name)
 		serie, error := utils.MediaBinarySearch(series, torrentName)
 		if error != nil {
-			log := fmt.Sprintf("Error searching for series: %s", torrent.Name)
-			logs.TimeLogs("serie", true, log, false)
+			log := fmt.Sprintf("Error searching for series: %s | %s", torrent.Name, torrentName)
+			logs.TimeLogs("serie", true, log, true)
 			continue
 		}
 		updateTorrent(serie, torrent)

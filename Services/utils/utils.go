@@ -37,18 +37,22 @@ var VideoExtensions = map[string]bool{
 func PrepareComparisonString(item string) string {
 	var name = strings.ToLower(item)
 
-	name = regexp.MustCompile(`/s\d{2}e\d{2}/gi`).ReplaceAllString(name, "")
-	name = regexp.MustCompile(`/s\d{2}e\d{2}/gi`).ReplaceAllString(name, "")       // remove "S01E02"
-	name = regexp.MustCompile(`/\b(19|20|21)\d{2}\b/g`).ReplaceAllString(name, "") // remove year
-	name = regexp.MustCompile(`/[\[\(].*?[\]\)]/g`).ReplaceAllString(name, "")     // remove content inside () and []
-	name = regexp.MustCompile(`/\s-\s\d{2}/g`).ReplaceAllString(name, "")          // remove ep pattern
-	name = regexp.MustCompile(`/:/g`).ReplaceAllString(name, "")                   // remove :
+	name = regexp.MustCompile(`(?i)s\d{2}e\d{2}`).ReplaceAllString(name, "")          // remove "S01E02"
+	name = regexp.MustCompile(`\b(18|19|20|21|22)\d{2}\b`).ReplaceAllString(name, "") // remove year
+	name = regexp.MustCompile(`(\[.*?\]|\(.*?\))`).ReplaceAllString(name, "")         // remove content inside () and []
+	name = regexp.MustCompile(`\s-\s\d{2}`).ReplaceAllString(name, "")                // remove ep pattern
 
 	infoList := []string{
 		"amzn",
 		"web-dl",
 		"blueray",
+		"remux",
+		"webrip",
 		"ddp5",
+		"flac",
+		"dd5.1",
+		"dd5",
+		"dvdrip",
 		"yts",
 		"playweb",
 		"720p",
@@ -59,12 +63,14 @@ func PrepareComparisonString(item string) string {
 		"h264",
 		"dv",
 		"hdr10+",
+		"encode/dvd",
+		"encode/webrip",
 		"hdr",
 		"ac3",
 		"5.1",
 		"sub",
 		"lcdom",
-		"webrip",
+		"x264",
 		"x265",
 		"10bit",
 		"aac5.1",
@@ -77,19 +83,25 @@ func PrepareComparisonString(item string) string {
 		"-higgsboson",
 		"multi",
 		"aac",
+		"avc/hevc",
+		"hevc",
+		"avc",
 		"v3",
 		"mkv",
 		"mp4",
+		"ethel",
 		"avi",
+		"eztvx.to",
+		"eztvx",
 		"-successfulcrab"}
 
 	for _, info := range infoList {
-		name = regexp.MustCompile(fmt.Sprintf("\\b%s\\b", info)).ReplaceAllString(name, "")
+		name = strings.ReplaceAll(name, info, "")
 	}
-
-	name = regexp.MustCompile(`/\s*\.\s*/g`).ReplaceAllString(name, "") // replace . surrounded by spaces with a single space
-	name = regexp.MustCompile(`/\s+/g`).ReplaceAllString(name, "")      // Normalize whitespace by collapsing multiple spaces into a single space and trimming
-
+	name = strings.ReplaceAll(name, " - ", "") // remove -
+	name = strings.ReplaceAll(name, ":", "")   // remove :
+	name = strings.ReplaceAll(name, ".", " ")  // replace . surrounded by spaces with a single space
+	name = strings.TrimSpace(name)
 	return name
 }
 
