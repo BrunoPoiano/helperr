@@ -6,6 +6,10 @@ func (m Serie) GetTitle() string {
 	return m.Title
 }
 
+func (m Serie) GetSortTitle() string {
+	return m.SortTitle
+}
+
 func (m Serie) GetAlternateTitles() []AlternateTitle {
 	return m.AlternateTitles
 }
@@ -22,12 +26,13 @@ type StatisticsSerie struct {
 }
 
 type Serie struct {
-	Id              int
-	Title           string
-	Path            string
-	AlternateTitles []AlternateTitle
-	Monitored       bool
-	Statistics      StatisticsSerie
+	Id              int              `json:"id"`
+	Title           string           `json:"title"`
+	SortTitle       string           `json:"sorteTitle"`
+	Path            string           `json:"path"`
+	AlternateTitles []AlternateTitle `json:"alternateTitles"`
+	Monitored       bool             `json:"monitored"`
+	Statistics      StatisticsSerie  `json:"statistics"`
 }
 
 type MissingSeries struct {

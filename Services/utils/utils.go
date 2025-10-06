@@ -14,6 +14,7 @@ import (
 type Media interface {
 	GetTitle() string
 	GetAlternateTitles() []types.AlternateTitle
+	GetSortTitle() string
 }
 
 var VideoExtensions = map[string]bool{
@@ -59,8 +60,12 @@ func PrepareComparisonString(item string) string {
 		"1080p",
 		"2160p",
 		"upscaled",
+		"-edith",
 		"h265",
 		"h264",
+		"h.265",
+		"h.264",
+		"nf",
 		"dv",
 		"hdr10+",
 		"encode/dvd",
@@ -72,17 +77,22 @@ func PrepareComparisonString(item string) string {
 		"lcdom",
 		"x264",
 		"x265",
+		"x.264",
+		"x.265",
 		"10bit",
-		"aac5.1",
 		"ita",
 		"eng",
 		"web",
 		"bili",
+		"aac",
+		"aac1",
+		"aac1.0",
 		"aac2",
+		"aac2.0",
+		"aac5.1",
 		"264-vary",
 		"-higgsboson",
 		"multi",
-		"aac",
 		"avc/hevc",
 		"hevc",
 		"avc",
@@ -137,6 +147,18 @@ func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
 			}
 
 			regexCompare := regexp.MustCompile(`\b` + regexp.QuoteMeta(serie_title) + `\b`).MatchString(compare)
+
+			if regexCompare {
+				return &content[middle], nil
+			}
+
+			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(content[middle].GetSortTitle()) + `\b`).MatchString(compare)
+
+			if regexCompare {
+				return &content[middle], nil
+			}
+
+			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(compare) + `\b`).MatchString(serie_title)
 
 			if regexCompare {
 				return &content[middle], nil

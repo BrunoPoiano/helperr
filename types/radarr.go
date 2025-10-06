@@ -6,6 +6,10 @@ func (m Movie) GetTitle() string {
 	return m.Title
 }
 
+func (m Movie) GetSortTitle() string {
+	return m.SortTitle
+}
+
 func (m Movie) GetAlternateTitles() []AlternateTitle {
 	return m.AlternateTitles
 }
@@ -30,6 +34,7 @@ type Movie struct {
 	Id              int              `json:"id"`
 	Title           string           `json:"title"`
 	Path            string           `json:"path"`
+	SortTitle       string           `json:"sortTitle"`
 	MovieFileId     int              `json:"movieFileId"`
 	MovieFile       MovieFile        `json:"movieFile"`
 	AlternateTitles []AlternateTitle `json:"alternateTitles"`
