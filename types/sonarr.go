@@ -28,7 +28,7 @@ type StatisticsSerie struct {
 type Serie struct {
 	Id              int              `json:"id"`
 	Title           string           `json:"title"`
-	SortTitle       string           `json:"sorteTitle"`
+	SortTitle       string           `json:"sortTitle"`
 	Path            string           `json:"path"`
 	AlternateTitles []AlternateTitle `json:"alternateTitles"`
 	Monitored       bool             `json:"monitored"`

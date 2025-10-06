@@ -8,7 +8,7 @@ COPY . .
 
 # Build the Go application with static linking to reduce dependencies
 RUN go mod init helperr
-RUN go build -ldflags="-X 'main.Version=v2.0.1'"
+RUN go build -ldflags="-X 'main.Version=v2.0.4'"
 
 # Use a smaller Alpine base for the final image
 FROM alpine:3.21

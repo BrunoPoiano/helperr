@@ -129,37 +129,55 @@ func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
 	end := len(content)
 
 	sort.Slice(content, func(i, j int) bool {
-		if strings.Compare(content[i].GetTitle(), content[j].GetTitle()) < 0 {
+		if strings.Compare(strings.ToLower(content[i].GetTitle()), strings.ToLower(content[j].GetTitle())) < 0 {
 			return true
 		}
 		return false
 	})
 
-	compare = PrepareComparisonString(compare)
 	// Search Main GetTitle()
 	for {
-		if end > start {
+		if end >= start {
 			middle := (end + start) / 2
 			serie_title := PrepareComparisonString(content[middle].GetTitle())
+			serie_title = strings.ToLower(serie_title)
+			compare = strings.ToLower(compare)
+			serie_sorted_title := strings.ToLower(content[middle].GetSortTitle())
 
 			if serie_title == compare {
 				return &content[middle], nil
 			}
 
-			regexCompare := regexp.MustCompile(`\b` + regexp.QuoteMeta(serie_title) + `\b`).MatchString(compare)
+			if serie_sorted_title == compare {
+				return &content[middle], nil
+			}
 
+			title_contains := strings.Contains(serie_title, compare)
+			if title_contains {
+				return &content[middle], nil
+			}
+
+			compare_contains := strings.Contains(compare, serie_title)
+			if compare_contains {
+				return &content[middle], nil
+			}
+
+			regexCompare := regexp.MustCompile(`\b` + regexp.QuoteMeta(serie_title) + `\b`).MatchString(compare)
 			if regexCompare {
 				return &content[middle], nil
 			}
 
-			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(content[middle].GetSortTitle()) + `\b`).MatchString(compare)
-
+			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(serie_sorted_title) + `\b`).MatchString(compare)
 			if regexCompare {
 				return &content[middle], nil
 			}
 
 			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(compare) + `\b`).MatchString(serie_title)
+			if regexCompare {
+				return &content[middle], nil
+			}
 
+			regexCompare = regexp.MustCompile(`\b` + regexp.QuoteMeta(compare) + `\b`).MatchString(serie_sorted_title)
 			if regexCompare {
 				return &content[middle], nil
 			}
