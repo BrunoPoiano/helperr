@@ -8,17 +8,26 @@ import "helperr/types"
 //
 // Returns:
 //   - A slice of Torrent structs that match the filter criteria.
-func FilteredTorrentList(torrentsList []types.Torrent) []types.Torrent {
-
+func FilteredTorrentList(torrentsList []types.Torrent, filter types.Filter) []types.Torrent {
 	var torrents []types.Torrent
 
-	for _, item := range torrentsList {
-		sonarr := item.Category == "tv-sonarr" && item.SavePath == "/downloads/tv-sonarr"
-		radarr := item.Category == "radarr" && item.SavePath == "/downloads/radarr"
+	if !filter.Category.IsValid() {
+		return torrents
+	}
 
-		if sonarr || radarr {
-			torrents = append(torrents, item)
+	println(filter.Category, filter.Path)
+
+	for _, item := range torrentsList {
+
+		if item.Category != string(filter.Category) {
+			continue
 		}
+
+		if filter.Path != "" && item.SavePath != string(filter.Path) {
+			continue
+		}
+
+		torrents = append(torrents, item)
 	}
 
 	return torrents

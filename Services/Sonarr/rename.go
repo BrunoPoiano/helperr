@@ -1,6 +1,9 @@
 package sonarr
 
-import logs "helperr/Services/Logs"
+import (
+	logs "helperr/Services/Logs"
+	"helperr/types"
+)
 
 // Rename triggers a rename series command in Sonarr.
 // Parameters:
@@ -10,7 +13,11 @@ import logs "helperr/Services/Logs"
 //   - None
 func Rename() {
 	logs.TimeLogs("serie", false, "Running rename series eps", true)
-	torrents, error := qbit.List()
+	torrents, error := qbit.List(types.Filter{
+		Category: "tv-sonarr",
+		Path:     "/downloads/tv-sonarr",
+	})
+
 	if error != nil {
 		logs.TimeLogs("serie", true, "Getting Torrent list", false)
 		return

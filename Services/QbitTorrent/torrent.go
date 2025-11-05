@@ -3,16 +3,17 @@ package qbittorrent
 import (
 	"encoding/json"
 	"fmt"
-	config "helperr/Services/Config"
-	logs "helperr/Services/Logs"
-	"helperr/Services/utils"
-	"helperr/types"
 	"io"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	config "helperr/Services/Config"
+	logs "helperr/Services/Logs"
+	"helperr/Services/utils"
+	"helperr/types"
 )
 
 type QbitWrapper struct {
@@ -39,7 +40,6 @@ func QBittorrentClient(values types.QBittorrentClient) *QbitWrapper {
 //   - body: The response body as a byte slice.
 //   - error: An error if the request fails.
 func (qbit *QbitWrapper) qbitRequest(method, url string, body io.Reader) ([]byte, error) {
-
 	request, error := http.NewRequest(method, qbit.BaseURL+url, body)
 	if error != nil {
 		return nil, error
@@ -97,8 +97,7 @@ func (qbit *QbitWrapper) Login(username, password string) *QbitWrapper {
 // Returns:
 //   - []types.Torrents: A slice of Torrents structs.
 //   - error: An error if the request fails.
-func (qbit *QbitWrapper) List() ([]types.Torrent, error) {
-
+func (qbit *QbitWrapper) List(filter types.Filter) ([]types.Torrent, error) {
 	var data []types.Torrent
 
 	body, err := qbit.qbitRequest("GET", "/api/v2/torrents/info", nil)
@@ -111,7 +110,7 @@ func (qbit *QbitWrapper) List() ([]types.Torrent, error) {
 	}
 
 	filtered := qbit.RemoveUndesiredExtentions(data)
-	filtered = utils.FilteredTorrentList(filtered)
+	filtered = utils.FilteredTorrentList(filtered, filter)
 
 	return filtered, nil
 }
@@ -283,7 +282,6 @@ func (qbit *QbitWrapper) DeleteTorrent(hash string, deleteFiles bool) error {
 func (qbit *QbitWrapper) RemoveUndesiredExtentions(
 	torrents []types.Torrent,
 ) []types.Torrent {
-
 	if len(config.Env.UndesiredExtentions) == 0 {
 		return torrents
 	}
