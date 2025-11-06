@@ -2,13 +2,14 @@ package utils
 
 import (
 	"fmt"
-	"helperr/types"
 	"os"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"helperr/types"
 )
 
 type Media interface {
@@ -35,7 +36,7 @@ var VideoExtensions = map[string]bool{
 // Returns:
 //   - The prepared string, lowercased and stripped of irrelevant information.
 func PrepareComparisonString(item string) string {
-	var name = strings.ToLower(item)
+	name := strings.ToLower(item)
 
 	name = regexp.MustCompile(`(?i)s\d{2}e\d{2}`).ReplaceAllString(name, "")          // remove "S01E02"
 	name = regexp.MustCompile(`\b(18|19|20|21|22)\d{2}\b`).ReplaceAllString(name, "") // remove year
@@ -93,7 +94,8 @@ func PrepareComparisonString(item string) string {
 		"avi",
 		"eztvx.to",
 		"eztvx",
-		"-successfulcrab"}
+		"-successfulcrab",
+	}
 
 	for _, info := range infoList {
 		name = strings.ReplaceAll(name, info, "")
@@ -114,7 +116,6 @@ func PrepareComparisonString(item string) string {
 // Returns:
 //   - A pointer to the found Media item, or nil if not found. Also returns an error if not found.
 func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
-
 	start := 0
 	end := len(content)
 
@@ -173,7 +174,7 @@ func MediaBinarySearch[T Media](content []T, compare string) (*T, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Movie Not Found")
+	return nil, fmt.Errorf("file Not Found")
 }
 
 // HasImdbidTags checks if the input string has IMDB ID tags.
@@ -232,7 +233,6 @@ func SeriesSeason(torrentName string) string {
 // Returns:
 //   - A map of undesired extensions, where the key is the extension and the value is true.
 func ParseUndesiredExtentions(raw string) map[string]bool {
-
 	values := make(map[string]bool)
 	rawTrimed := strings.Trim(raw, "[]")
 
@@ -267,5 +267,4 @@ func ReturnEnvVariable[T interface{}](key string, default_value T) T {
 	default:
 		return default_value
 	}
-
 }

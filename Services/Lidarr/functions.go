@@ -13,38 +13,39 @@ type lidarrWrapper struct {
 	types.LidarrClient
 }
 
-// GetTitle retrieves the title of a movie.
+// GetTitle retrieves the artist name from a music group.
 // Parameters:
-//   - m: The movie object.
+//   - m: The music group object.
 //
 // Returns:
-//   - The title of the movie.
+//   - The artist name.
 func GetTitle(m types.Groups) string {
 	return m.ArtistName
 }
 
-// GetAlternateTitles retrieves the alternate titles of a movie.
+// GetAlternateTitles retrieves the alternate titles of an artist/album.
+// Currently returns an empty slice as alternate titles are not implemented for Lidarr.
 // Parameters:
-//   - m: The movie object.
+//   - m: The music group object.
 //
 // Returns:
-//   - A slice of alternate titles for the movie.
+//   - A slice of alternate titles (currently empty).
 func GetAlternateTitles(m types.Groups) []types.AlternateTitle {
 	var alternateTitle []types.AlternateTitle
 	return alternateTitle
 }
 
-// RadarrClient creates a new Radarr client wrapper.
+// LidarrClient creates a new Lidarr client wrapper.
 // Parameters:
-//   - values: The Radarr client configuration values.
+//   - values: The Lidarr client configuration values.
 //
 // Returns:
-//   - A pointer to the Radarr client wrapper.
+//   - A pointer to the Lidarr client wrapper.
 func LidarrClient(values types.LidarrClient) *lidarrWrapper {
 	return &lidarrWrapper{values}
 }
 
-// lidarrRequest makes a request to the Radarr API.
+// lidarrRequest makes a request to the Lidarr API.
 // Parameters:
 //   - method: The HTTP method to use (e.g., "GET", "POST").
 //   - url: The API endpoint URL.
@@ -74,12 +75,12 @@ func (lidarr *lidarrWrapper) lidarrRequest(method, url string, body io.Reader) (
 	return responseBody, nil
 }
 
-// List retrieves a list of movies from Radarr.
+// List retrieves a list of artists from Lidarr.
 // Parameters:
 //   - None
 //
 // Returns:
-//   - A slice of Movie objects.
+//   - A slice of Groups objects containing artist information.
 //   - An error if the request fails.
 func (lidarr *lidarrWrapper) List() ([]types.Groups, error) {
 	var groups []types.Groups
@@ -96,10 +97,10 @@ func (lidarr *lidarrWrapper) List() ([]types.Groups, error) {
 	return groups, nil
 }
 
-// LidarrCommand sends a command to Radarr.
+// LidarrCommand sends a command to Lidarr.
 // Parameters:
-//   - command: The command to execute.
-//   - movesIds: A slice of movie IDs to apply the command to.
+//   - command: The command to execute (e.g., "RenameArtist").
+//   - artistIds: A slice of artist IDs to apply the command to.
 //
 // Returns:
 //   - An error if the request fails.

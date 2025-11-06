@@ -9,7 +9,9 @@ import (
 	"helperr/types"
 )
 
-// Relocate checks for new series files in the torrent client and updates their location.
+// Relocate checks for new album files in the torrent client and updates their location.
+// It searches for torrents in the lidarr category, matches them with albums from Lidarr,
+// and relocates them to the appropriate artist directory.
 // Parameters:
 //   - None
 //
@@ -50,10 +52,12 @@ func Relocate() {
 	}
 }
 
-// updateTorrent updates the location of a torrent based on the series and torrent information.
+// updateTorrent updates the location of a torrent based on the album and torrent information.
+// It extracts the artist directory name from the group path and relocates the torrent
+// to the appropriate location within the Lidarr download directory.
 // Parameters:
-//   - serie: The series information.
-//   - torrent: The torrent information.
+//   - group: The album/artist group information from Lidarr.
+//   - torrent: The torrent information from the torrent client.
 //
 // Returns:
 //   - None
@@ -64,15 +68,15 @@ func updateTorrent(group *types.Groups, torrent types.Torrent) {
 
 	downloadPath := lidarrClient.DownloadPath
 
-	// Extract the groups name from the path
+	// Extract the artist directory name from the path
 	split := strings.Split(group.Path, "/")
 	groupsName := split[len(split)-1]
 
-	// Construct the base path and season-specific path
+	// Construct the full path to the artist directory
 	groupPath := downloadPath + groupsName
 
 	println(groupPath)
-	// For single-file torrents, move directly to the season-specific path
+	// Relocate the torrent to the artist directory
 	error := qbit.RelocateTorrent(torrent.Hash, groupPath)
 	if error != nil {
 		log := fmt.Sprintf("error changing the location: %s", group.ArtistName)

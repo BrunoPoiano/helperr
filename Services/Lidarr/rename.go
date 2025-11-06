@@ -5,7 +5,9 @@ import (
 	"helperr/types"
 )
 
-// Rename triggers a rename command in Radarr for movies that meet certain criteria.
+// Rename triggers a rename command in Lidarr for music files that meet certain criteria.
+// It checks for active torrents in the lidarr category, collects monitored artists
+// with track files, and triggers a batch rename operation for all qualifying artists.
 //
 // Parameters:
 //   - None
