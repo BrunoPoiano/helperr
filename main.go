@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"sync"
+
+	lidarr "helperr/Services/Lidarr"
 	logs "helperr/Services/Logs"
 	radarr "helperr/Services/Radarr"
 	sonarr "helperr/Services/Sonarr"
-	"os"
-	"sync"
 )
 
 var Version = "unknown"
 
 func main() {
-
 	args := os.Args[1:]
 
 	var wg sync.WaitGroup
@@ -29,7 +30,7 @@ func main() {
 		}()
 		break
 	case "rename":
-		wg.Add(2)
+		wg.Add(3)
 		go func() {
 			sonarr.Rename()
 			defer wg.Done()
@@ -38,15 +39,23 @@ func main() {
 			radarr.Rename()
 			defer wg.Done()
 		}()
+		go func() {
+			lidarr.Rename()
+			defer wg.Done()
+		}()
 		break
 	case "relocate":
-		wg.Add(2)
+		wg.Add(3)
 		go func() {
 			sonarr.Relocate()
 			defer wg.Done()
 		}()
 		go func() {
 			radarr.Relocate()
+			defer wg.Done()
+		}()
+		go func() {
+			lidarr.Relocate()
 			defer wg.Done()
 		}()
 		break
@@ -63,10 +72,10 @@ func main() {
 		break
 
 	case "missing-series":
-		sonarr.Relocate()
+		sonarr.Missing()
 		break
 	case "missing-movies":
-		radarr.Relocate()
+		radarr.Missing()
 		break
 
 	case "rename-series":
@@ -75,12 +84,18 @@ func main() {
 	case "rename-movies":
 		radarr.Rename()
 		break
+	case "rename-songs":
+		lidarr.Rename()
+		break
 
 	case "relocate-series":
 		sonarr.Relocate()
 		break
 	case "relocate-movies":
 		radarr.Relocate()
+		break
+	case "relocate-songs":
+		lidarr.Relocate()
 		break
 
 	case "check-telegram":
@@ -93,8 +108,8 @@ func main() {
 	case "--version":
 		fmt.Printf("Version: %s \n", Version)
 		break
+
 	}
 
 	wg.Wait()
-
 }

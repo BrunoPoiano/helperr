@@ -2,10 +2,11 @@ package radarr
 
 import (
 	"fmt"
+	"strings"
+
 	logs "helperr/Services/Logs"
 	"helperr/Services/utils"
 	"helperr/types"
-	"strings"
 )
 
 // Relocate checks for movies to relocate and calls updateTorrent for each.
@@ -18,7 +19,11 @@ import (
 func Relocate() {
 	logs.TimeLogs("movie", false, "Running Relocate Movies Check", false)
 
-	torrents, error := qbit.List()
+	torrents, error := qbit.List(types.Filter{
+		Category: "radarr",
+		Path:     "/downloads/radarr",
+	})
+
 	if error != nil {
 		logs.TimeLogs("movie", true, fmt.Sprintf("getting torrent list | %s", error.Error()), false)
 		return

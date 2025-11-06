@@ -8,7 +8,7 @@ COPY . .
 
 # Build the Go application with static linking to reduce dependencies
 RUN go mod init helperr
-RUN go build -ldflags="-X 'main.Version=v2.0.4'"
+RUN go build -ldflags="-X 'main.Version=v2.1.4'"
 
 # Use a smaller Alpine base for the final image
 FROM alpine:3.21
@@ -20,14 +20,15 @@ WORKDIR /app/helperr
 RUN apk add --no-cache tzdata
 # Setup crontab with properly formatted cron expressions
 
-# Run check on series and movies every 10 minutes between midnight-5:59AM and 9AM-11:59PM
+# Run relocate for series, movies, and songs every 10 minutes between midnight-5:59AM and 9AM-11:59PM
 RUN echo "*/10 0-5,9-23 * * * cd /app/helperr && ./helperr relocate >> /var/log/cron.log 2>&1" > /etc/crontabs/root
 
-# Run rename files task daily at 7:00AM
-RUN echo "0 7 */3 * * cd /app/helperr && ./helperr rename >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
+# Run rename files task for series, movies, and songs daily at 7:00AM
+RUN echo "0 7 * * * cd /app/helperr && ./helperr rename >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
 
-# Run search for missing series and movies daily at 8:00AM
+# Run search for missing series and movies daily at 8:00AM and 20:00PM
 RUN echo "0 8 * * * cd /app/helperr && ./helperr missing >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
+RUN echo "0 20 * * * cd /app/helperr && ./helperr missing >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
 
 # Create empty log file for cron output
 RUN touch /var/log/cron.log

@@ -6,11 +6,12 @@ const (
 	LogTypeMovie   LogType = "movie"
 	LogTypeSerie   LogType = "serie"
 	LogTypeTorrent LogType = "torrent"
+	LogTypeMusic   LogType = "music"
 )
 
 func (t LogType) IsValid() bool {
 	switch t {
-	case LogTypeMovie, LogTypeSerie, LogTypeTorrent:
+	case LogTypeMovie, LogTypeSerie, LogTypeTorrent, LogTypeMusic:
 		return true
 	default:
 		return false

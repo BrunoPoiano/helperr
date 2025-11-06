@@ -2,10 +2,11 @@ package sonarr
 
 import (
 	"fmt"
+	"strings"
+
 	logs "helperr/Services/Logs"
 	"helperr/Services/utils"
 	"helperr/types"
-	"strings"
 )
 
 // Relocate checks for new series files in the torrent client and updates their location.
@@ -15,10 +16,12 @@ import (
 // Returns:
 //   - None
 func Relocate() {
-
 	logs.TimeLogs("serie", false, "running series check", false)
 
-	torrents, error := qbit.List()
+	torrents, error := qbit.List(types.Filter{
+		Category: "tv-sonarr",
+		Path:     "/downloads/tv-sonarr",
+	})
 	if error != nil {
 		logs.TimeLogs("serie", true, "Error listing Torrents", false)
 		return
