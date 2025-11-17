@@ -48,7 +48,6 @@ func Rename() {
 			continue
 		}
 
-		println(group.ArtistName, group.Id)
 		artistsIds = append(artistsIds, group.Id)
 	}
 

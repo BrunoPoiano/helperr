@@ -28,7 +28,7 @@ type Index string
 
 const (
 	Radarr Index = "radarr"
-	Sonarr Index = "sonarr"
+	Sonarr Index = "tv-sonarr"
 	Lidarr Index = "lidarr"
 )
 

@@ -47,7 +47,6 @@ func Relocate() {
 			logs.TimeLogs("music", true, log, true)
 			continue
 		}
-		println(torrentName, " | ", torrent.Name, " | ", group.ArtistName)
 		updateTorrent(group, torrent)
 	}
 }
@@ -75,7 +74,6 @@ func updateTorrent(group *types.Groups, torrent types.Torrent) {
 	// Construct the full path to the artist directory
 	groupPath := downloadPath + groupsName
 
-	println(groupPath)
 	// Relocate the torrent to the artist directory
 	error := qbit.RelocateTorrent(torrent.Hash, groupPath)
 	if error != nil {

@@ -15,8 +15,6 @@ func FilteredTorrentList(torrentsList []types.Torrent, filter types.Filter) []ty
 		return torrents
 	}
 
-	println(filter.Category, filter.Path)
-
 	for _, item := range torrentsList {
 
 		if item.Category != string(filter.Category) {
